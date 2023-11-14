@@ -18,20 +18,23 @@ if (typeof WebSocket !== 'function') {
     };
 }
 
+function extractMessage(data)  {
+    console.log(data)
+    return `[${data.headers.destination}] ${JSON.parse(data.body).fromUser}: ${JSON.parse(data.body).content}`
+}
+
 stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
-    stompClient.subscribe('/topic/citadel', (greeting) => {
-        console.log(666, greeting)
-        showGreeting(JSON.parse(greeting.body).effect);
+
+    stompClient.subscribe('/user/common/question', (data) => {
+        showGreeting(extractMessage(data));
     });
-    stompClient.subscribe('/bgs/citadel', (greeting) => {
-        console.log(777, greeting)
-        showGreeting(JSON.parse(greeting.body).action);
+    stompClient.subscribe('/common/broadcast', (data) => {
+        showGreeting(extractMessage(data));
     });
-    stompClient.subscribe('/topic/citadel2', (greeting) => {
-        console.log(88, greeting)
-        showGreeting(JSON.parse(greeting.body).action);
+    stompClient.subscribe('/user/common/chat', (data) => {
+        showGreeting(extractMessage(data));
     });
 };
 
@@ -66,25 +69,33 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
+function broadcast() {
     stompClient.publish({
-        destination: "/bgs/citadel",
-        body: JSON.stringify({'name': $("#name").val()})
+        destination: "/bgs/common/broadcast",
+        body: JSON.stringify({'content': $("#input").val()})
     });
 }
-function sendName2(){
+function broadcast2() {
     stompClient.publish({
-        destination: "/topic/citadel",
-        body: JSON.stringify({'effect': $("#name").val()})
+        destination: "/bgs/common/broadcast2",
+        body: JSON.stringify({'content': $("#input").val()})
+    });
+}
+function question() {
+    stompClient.publish({
+        destination: "/bgs/common/question",
+        body: JSON.stringify({'content': $("#input").val()})
     });
 }
 
-function sendName3(){
+function chat(){
     stompClient.publish({
-        destination: "/bgs/citadel2",
-        body: JSON.stringify({'effect': $("#name").val()})
+        destination: "/bgs/common/chat",
+        body: JSON.stringify({'toUser': $("#input2").val(),'content': $("#input").val()})
     });
 }
+
+
 
 function showGreeting(message) {
     $("#greetings").append("<tr><td>" + message + "</td></tr>");
@@ -94,8 +105,9 @@ $(function () {
     $("form").on('submit', (e) => e.preventDefault());
     $( "#connect" ).click(() => connect());
     $( "#disconnect" ).click(() => disconnect());
-    $( "#send" ).click(() => sendName());
-    $( "#send2" ).click(() => sendName2());
-    $( "#send3" ).click(() => sendName3());
+    $( "#broadcast" ).click(() => broadcast());
+    $( "#broadcast2" ).click(() => broadcast2());
+    $( "#question" ).click(() => question());
+    $( "#chat" ).click(() => chat());
 });
 

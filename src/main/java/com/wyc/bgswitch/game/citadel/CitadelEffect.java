@@ -11,4 +11,5 @@ import lombok.Setter;
 public class CitadelEffect extends GameEffect {
     private String gameId;
     private String effect;
+    private String content;
 }

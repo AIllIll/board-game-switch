@@ -8,17 +8,22 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
 import java.security.Principal;
 
 @Controller
-public class CitadelHandler {
+@MessageMapping("/citadel")
+public class CitadelWsController {
     private SimpMessagingTemplate template;
     @Autowired
-    public CitadelHandler(SimpMessagingTemplate template) {
+    public CitadelWsController(SimpMessagingTemplate template) {
         this.template = template;
     }
+
+
+
+
+
     @MessageMapping("/citadel")
     @SendTo("/topic/citadel")
     public CitadelEffect actionToEffect(CitadelAction action, Principal principal) {
@@ -26,31 +31,24 @@ public class CitadelHandler {
         System.out.println(principal);
         this.template.convertAndSend(
                 "/topic/citadel",
-                new CitadelEffect(null, action.getAction())
+                new CitadelEffect(null, "","template 返回给/topic/citadel")
         );
         this.template.convertAndSend(
                 "/bgs/citadel",
-                new CitadelEffect(null, action.getAction())
+                new CitadelEffect(null, "","template 返回给/bgs/citadel")
         );
 
-        this.template.convertAndSendToUser(",",
-                "/bgs/citadel",
-                new CitadelEffect(null, action.getAction())
+        this.template.convertAndSendToUser(principal.getName(),
+                "/topic/citadel",
+                new CitadelEffect(null, "","template 返回给/user/queue/citadel")
         );
-        return new CitadelEffect(action.getGameId(),"test666");
+        return new CitadelEffect(action.getGameId(),"","@SendTo 返回给/topic/citadel");
     }
-
-    @MessageMapping("/citadel2")
-    public CitadelEffect directlyReturn(CitadelAction action) {
-        System.out.println(12334);
-        return new CitadelEffect(action.getGameId(),action.getAction());
-    }
-
-    @MessageMapping("/citadel3")
-    @SendToUser("/citadel")
-    public CitadelEffect handleCitadel3(CitadelAction action) {
-        System.out.println(654);
-        return new CitadelEffect(action.getGameId(),action.getAction());
+    @MessageMapping("/citadel4")
+    @SendToUser(value = "/citadel", broadcast = false)
+    public CitadelEffect handleCitadel4(CitadelAction action, Principal principal) {
+        System.out.println(""+654+principal.getName());
+        return new CitadelEffect(action.getGameId(), "","@SendToUser返回给/user/citadel");
     }
 
 }

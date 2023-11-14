@@ -9,5 +9,5 @@ import lombok.Setter;
 public class CitadelAction extends GameAction {
     private String gameId;
     private String action;
-    private String name;
+    private String content;
 }

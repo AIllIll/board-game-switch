@@ -1,10 +1,14 @@
 package com.wyc.bgswitch.web.websocket;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -12,7 +16,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic"); // 发布/订阅式的channel
+        config.enableSimpleBroker(
+                "/topic", // 默认
+                "/common", // 通用
+                "/bg-citadel" // 富饶之城
+        ); // 发布/订阅式的channel
         config.setApplicationDestinationPrefixes("/bgs"); // app应用，可以向restful一样向server发东西
         config.setUserDestinationPrefix("/user"); // 这是对单个用户发消息
     }

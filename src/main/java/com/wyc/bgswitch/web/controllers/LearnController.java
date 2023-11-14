@@ -29,11 +29,11 @@ public class LearnController {
         System.out.println(123);
         this.template.convertAndSend(
                 "/topic/citadel",
-                new CitadelEffect(null, msg)
+                new CitadelEffect(null,"", msg)
         );
         this.template.convertAndSend(
                 "/bgs/citadel",
-                new CitadelEffect(null, msg)
+                new CitadelEffect(null, "",msg)
         );
         return msg;
     }
