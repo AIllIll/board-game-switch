@@ -31,7 +31,8 @@ public class CommonWsController {
     @MessageMapping("/broadcast")
     @SendTo("/common/broadcast")
     public ChatMessage broadcast(ChatMessage msg, Principal principal) {
-        msg.setFromUser(principal.getName());
+        if(principal != null)
+            msg.setFromUser(principal.getName());
         return msg;
     }
 
@@ -41,7 +42,8 @@ public class CommonWsController {
      */
     @MessageMapping("/broadcast2")
     public void broadcast2(ChatMessage msg, Principal principal) {
-        msg.setFromUser(principal.getName());
+        if(principal != null)
+            msg.setFromUser(principal.getName());
         this.messaging.convertAndSend(
                 "/common/broadcast",
                 msg
@@ -57,7 +59,8 @@ public class CommonWsController {
      */
     @MessageMapping("/chat")
     public void message(ChatMessage msg, Principal principal) {
-        msg.setFromUser(principal.getName());
+        if(principal != null)
+            msg.setFromUser(principal.getName());
         this.messaging.convertAndSendToUser(msg.getToUser(),
                 "/common/chat",
                 msg

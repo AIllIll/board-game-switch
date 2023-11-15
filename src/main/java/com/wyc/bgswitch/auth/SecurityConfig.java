@@ -15,10 +15,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((authorize) -> authorize
-                        .anyRequest().authenticated()
-                )
+        http.authorizeHttpRequests((authorize) -> {
+//                    authorize.anyRequest().authenticated(); // 全部要求认证
+                    authorize.anyRequest().permitAll(); // 全部开放访问
+                })
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
 

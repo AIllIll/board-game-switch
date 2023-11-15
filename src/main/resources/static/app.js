@@ -94,6 +94,32 @@ function chat(){
         body: JSON.stringify({'toUser': $("#input2").val(),'content': $("#input").val()})
     });
 }
+function tryConnect() {
+    console.log(2)
+    const ws = new WebSocket(
+        'ws://192.168.1.100:8080/bgs-websocket'
+    );
+    ws.onopen = () => {
+        console.log('open')
+        // connection opened
+        // ws.send('something'); // send a message
+    };
+
+    ws.onmessage = e => {
+        // a message was received
+        console.log(e.data);
+    };
+
+    ws.onerror = e => {
+        // an error occurred
+        console.log('error', e);
+    };
+
+    ws.onclose = e => {
+        // connection closed
+        console.log(e.code, e.reason);
+    };
+}
 
 
 
@@ -108,6 +134,7 @@ $(function () {
     $( "#broadcast" ).click(() => broadcast());
     $( "#broadcast2" ).click(() => broadcast2());
     $( "#question" ).click(() => question());
-    $( "#chat" ).click(() => chat());
+    // $( "#chat" ).click(() => chat());
+    $( "#chat" ).click(() => tryConnect());
 });
 
