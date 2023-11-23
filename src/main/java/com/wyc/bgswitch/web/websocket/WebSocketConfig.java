@@ -54,7 +54,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         // 要求具备身份
         AuthorizationManager<Message<?>> messageAuthorizationManager = MessageMatcherDelegatingAuthorizationManager.builder()
-                .simpTypeMatchers(SimpMessageType.CONNECT).permitAll()
+//                .simpTypeMatchers(SimpMessageType.CONNECT).permitAll()
 //                .simpMessageDestMatchers("/bgs/common/broadcast").hasAuthority("SCOPE_ROLE_USER")
                 .anyMessage().hasRole("USER")
 //                .anyMessage().hasAuthority("SCOPE_ROLE_USER")
