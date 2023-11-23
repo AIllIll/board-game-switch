@@ -1,20 +1,28 @@
+const hostLANIp = '192.168.1.6'
+const localhost = "localhost"
+let host = localhost
+
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/bgs-websocket',
+    brokerURL: `ws://${host}:8080/bgs-websocket`,
     debug: function (str) {
         console.log(str);
     },
-    reconnectDelay: 5000,
+    reconnectDelay: -1,
     heartbeatIncoming: 4000,
     heartbeatOutgoing: 4000,
 });
 
+let _csrf;
+let _jwt;
+
 // Fallback code
 if (typeof WebSocket !== 'function') {
+    console.log("use SockJs")
     // For SockJS you need to set a factory that creates a new SockJS instance
     // to be used for each (re)connect
     stompClient.webSocketFactory = function () {
         // Note that the URL is different from the WebSocket URL
-        return new SockJS('http://localhost:8080/bgs-sockjs');
+        return new SockJS(`http://${host}:8080/bgs-sockjs`);
     };
 }
 
@@ -26,7 +34,19 @@ function extractMessage(data)  {
 stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
+    console.log("stompClient", stompClient)
+    // stompClient.subscribe('/user/common/question', (data) => {
+    //     showGreeting(extractMessage(data));
+    // });
+    // stompClient.subscribe('/common/broadcast', (data) => {
+    //     showGreeting(extractMessage(data));
+    // });
+    // stompClient.subscribe('/user/common/chat', (data) => {
+    //     showGreeting(extractMessage(data));
+    // });
+};
 
+function subscribe() {
     stompClient.subscribe('/user/common/question', (data) => {
         showGreeting(extractMessage(data));
     });
@@ -36,7 +56,7 @@ stompClient.onConnect = (frame) => {
     stompClient.subscribe('/user/common/chat', (data) => {
         showGreeting(extractMessage(data));
     });
-};
+}
 
 stompClient.onWebSocketError = (error) => {
     console.error('Error with websocket', error);
@@ -60,6 +80,17 @@ function setConnected(connected) {
 }
 
 function connect() {
+    if(!_csrf) {
+        console.log("no _csrf")
+    } else {
+        stompClient.connectHeaders[_csrf.headerName]= _csrf.token
+    }
+    if(!_jwt) {
+        console.log("no _jwt")
+    } else {
+        stompClient.connectHeaders['JWT']= _jwt
+    }
+    console.log(_csrf, _jwt, stompClient)
     stompClient.activate();
 }
 
@@ -97,7 +128,7 @@ function chat(){
 function tryConnect() {
     console.log(2)
     const ws = new WebSocket(
-        'ws://192.168.1.100:8080/bgs-websocket'
+        `ws://${host}:8080/bgs-websocket`
     );
     ws.onopen = () => {
         console.log('open')
@@ -136,5 +167,107 @@ $(function () {
     $( "#question" ).click(() => question());
     // $( "#chat" ).click(() => chat());
     $( "#chat" ).click(() => tryConnect());
+    $( "#updateIp" ).click(() => {
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        console.log($("meta[name='_csrf']"))
+        console.log(header, token)
+        console.log($("#ip").val())
+
+        const Http = new XMLHttpRequest();
+        const url=`http://${host}:8080/VPN/update`;
+        Http.open("POST", url);
+        if(_csrf) Http.setRequestHeader(_csrf.headerName, _csrf.token)
+
+        // Http.setRequestHeader("Content-Type", "application/json")
+        // Http.send(JSON.stringify({ip:2})) // 注意这个
+
+        Http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+        Http.send(`ip=${$("#ip").val()}`) // 注意这个
+
+        // Http.setRequestHeader("Content-Type", "application/form-data")
+        // Http.setRequestHeader(header, token)
+        // Http.send(JSON.stringify({
+        //     ip: $("#ip").val()
+        // }));
+        Http.onreadystatechange = (e) => {
+            console.log(Http.responseText)
+        }
+    });
+    $( "#getIp" ).click(() => {
+        const Http = new XMLHttpRequest();
+        const url=`http://${host}:8080/VPN/subscription`;
+        Http.open("GET", url);
+        Http.send();
+        Http.onreadystatechange = (e) => {
+            if(e.currentTarget.readyState === 4) {
+                console.log(JSON.parse(atob(atob(Http.responseText).substring(8))).add)
+                $("#vpnIp").html(JSON.parse(atob(atob(Http.responseText).substring(8))).add)
+            }
+        }
+    })
+    $("#getCsrfToken").click(() => {
+        // console.log("${_csrf.parameterName}")
+        const Http = new XMLHttpRequest();
+        // const url=`http://${host}:8080/csrf`;
+        const url=`http://${hostLANIp}:8080/csrf`;
+        Http.open("GET", url);
+        Http.onreadystatechange = (e) => {
+            if(e.currentTarget.readyState === 4) {
+                console.log(JSON.parse(Http.responseText))
+                _csrf = JSON.parse(Http.responseText)
+            }
+        }
+        Http.send()
+    })
+    $("#getJWT").click(() => {
+        // console.log("${_csrf.parameterName}")
+        const Http = new XMLHttpRequest();
+        const url=`http://${host}:8080/learn/hello`;
+        Http.open("GET", url);
+        Http.onreadystatechange = (e) => {
+            if(e.currentTarget.readyState === 4) {
+                console.log(Http.responseText)
+                _jwt = Http.responseText.replace("Bearer ","")
+            }
+        }
+        Http.send()
+    })
+
+    $("#getJWTWithAccount").click(() => {
+        // console.log("${_csrf.parameterName}")
+        const Http = new XMLHttpRequest();
+        const url=`http://${host}:8080/learn/hello`;
+        Http.open("GET", url);
+        Http.setRequestHeader("Authorization", `Basic ${btoa(
+            'user:password'
+        )}`)
+        Http.onreadystatechange = (e) => {
+            if(e.currentTarget.readyState === 4) {
+                console.log(Http.responseText)
+                _jwt = Http.responseText.replace("Bearer ","")
+            }
+        }
+        Http.send()
+    })
+
+    $("#subscribe").click(()=>subscribe())
+    $("#testRole").click(()=>{
+        const Http = new XMLHttpRequest();
+        const url=`http://${host}:8080/learn/testRole`;
+        Http.open("GET", url);
+
+        Http.setRequestHeader("Authorization", `Basic ${btoa(
+            'wyc:password'
+        )}`)
+        // Http.setRequestHeader("Authorization", `Bearer ${_jwt}`)
+
+        Http.onreadystatechange = (e) => {
+            if (e.currentTarget.readyState === 4) {
+                console.log(e)
+            }
+        }
+        Http.send()
+    })
 });
 

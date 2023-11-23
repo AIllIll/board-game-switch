@@ -1,0 +1,14 @@
+{
+  "add": "",
+  "aid": 77,
+  "host": "",
+  "id": "bf13bb85-270c-4f3b-9429-8274490d2f22",
+  "net": "tcp",
+  "path": "",
+  "port": 2333,
+  "tls": "",
+  "ps": "aws",
+  "remark": "aws",
+  "type": "none",
+  "v": "2",
+}
