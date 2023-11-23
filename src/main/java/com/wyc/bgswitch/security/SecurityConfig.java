@@ -93,7 +93,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
                 User.withDefaultPasswordEncoder()
-                        .username("wyc").password("password").roles("USER")
+                        .username("wyc").password("password").roles("USER", "WYC")
                         .build(),
                 User.withDefaultPasswordEncoder()
                         .username("user").password("password").roles("USER", "USER2")

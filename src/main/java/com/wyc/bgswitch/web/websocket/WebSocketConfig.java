@@ -61,7 +61,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .build();
         AuthorizationChannelInterceptor messages = new AuthorizationChannelInterceptor(messageAuthorizationManager);
         messages.setAuthorizationEventPublisher(new SpringAuthorizationEventPublisher(this.context));
-        registration.interceptors(new SecurityContextChannelInterceptor(), messages);
+
+        registration.interceptors(new SecurityContextChannelInterceptor(), authz, messages);
     }
 
 

@@ -2,10 +2,12 @@ package com.wyc.bgswitch.web.websocket;
 
 import com.wyc.bgswitch.common.ChatMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Role;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -29,6 +31,7 @@ public class CommonWsController {
      * @return
      */
     @MessageMapping("/broadcast")
+    @PreAuthorize("hasRole('USER2')")
     @SendTo("/common/broadcast")
     public ChatMessage broadcast(ChatMessage msg, Principal principal) {
         if(principal != null)
@@ -41,6 +44,7 @@ public class CommonWsController {
      * @param msg
      */
     @MessageMapping("/broadcast2")
+    @PreAuthorize("hasRole('WYC')")
     public void broadcast2(ChatMessage msg, Principal principal) {
         if(principal != null)
             msg.setFromUser(principal.getName());

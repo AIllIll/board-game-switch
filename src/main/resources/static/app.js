@@ -157,7 +157,22 @@ function tryConnect() {
 function showGreeting(message) {
     $("#greetings").append("<tr><td>" + message + "</td></tr>");
 }
-
+const getJWTWithAccount = (username) => {
+    // console.log("${_csrf.parameterName}")
+    const Http = new XMLHttpRequest();
+    const url=`http://${host}:8080/learn/hello`;
+    Http.open("GET", url);
+    Http.setRequestHeader("Authorization", `Basic ${btoa(
+        `${username}:password`
+    )}`)
+    Http.onreadystatechange = (e) => {
+        if(e.currentTarget.readyState === 4) {
+            console.log(Http.responseText)
+            _jwt = Http.responseText.replace("Bearer ","")
+        }
+    }
+    Http.send()
+}
 $(function () {
     $("form").on('submit', (e) => e.preventDefault());
     $( "#connect" ).click(() => connect());
@@ -234,22 +249,8 @@ $(function () {
         Http.send()
     })
 
-    $("#getJWTWithAccount").click(() => {
-        // console.log("${_csrf.parameterName}")
-        const Http = new XMLHttpRequest();
-        const url=`http://${host}:8080/learn/hello`;
-        Http.open("GET", url);
-        Http.setRequestHeader("Authorization", `Basic ${btoa(
-            'user:password'
-        )}`)
-        Http.onreadystatechange = (e) => {
-            if(e.currentTarget.readyState === 4) {
-                console.log(Http.responseText)
-                _jwt = Http.responseText.replace("Bearer ","")
-            }
-        }
-        Http.send()
-    })
+    $("#getJWTWithWyc").click(() => getJWTWithAccount('wyc'))
+    $("#getJWTWithUser").click(() => getJWTWithAccount('user'))
 
     $("#subscribe").click(()=>subscribe())
     $("#testRole").click(()=>{
