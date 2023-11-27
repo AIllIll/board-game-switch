@@ -1,9 +1,11 @@
-const hostLANIp = '192.168.1.6'
+const hostLANIp = '192.168.1.8'
+const hostDomain ='3229nr8294.yicp.fun'
 const localhost = "localhost"
-let host = localhost
-
+let http = "https"
+let host = hostDomain
+let user = null
 const stompClient = new StompJs.Client({
-    brokerURL: `ws://${host}:8080/bgs-websocket`,
+    brokerURL: `ws://${host}/bgs-websocket`,
     debug: function (str) {
         console.log(str);
     },
@@ -20,7 +22,7 @@ if (typeof WebSocket !== 'function') {
     // to be used for each (re)connect
     stompClient.webSocketFactory = function () {
         // Note that the URL is different from the WebSocket URL
-        return new SockJS(`http://${host}:8080/bgs-sockjs`);
+        return new SockJS(`http://${host}/bgs-sockjs`);
     };
 }
 
@@ -41,7 +43,8 @@ stompClient.onConnect = (frame) => {
 
 function subscribe() {
     stompClient.subscribe('/public/lobby', (data) => {
-        showGreeting(extractMessage(data));
+        const msg = extractMessage(data);
+        showGreeting(msg, msg.fromUser == user);
     });
     stompClient.subscribe('/user/private/*', (data) => {
         showGreeting(extractMessage(data));
@@ -122,13 +125,14 @@ function chat(){
     console.log($("#toUser"))
     stompClient.publish({
         destination: `/bgs/chat/user/${$("#toUser").val()}`,
-        body: JSON.stringify({'toUser': $("#toUser").val(),'content': $("#input").val()})
+        body: JSON.stringify({'toUser': $("#toUser").val(),'content': $("#input").val()}),
     });
+    showGreeting(`[Send to ${$("#toUser").val()}]: ${$("#input").val()}`, true)
 }
 function tryConnect() {
     console.log(2)
     const ws = new WebSocket(
-        `ws://${host}:8080/bgs-websocket`
+        `ws://${host}/bgs-websocket`
     );
     ws.onopen = () => {
         console.log('open')
@@ -154,13 +158,18 @@ function tryConnect() {
 
 
 
-function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+function showGreeting(message, myself=false) {
+    if(myself) {
+        $("#greetings").append("<tr><td style='background-color: #95ec69; text-align: right'>" + message + "</td></tr>");
+    } else {
+        $("#greetings").append("<tr><td style='background-color: #DDDDDD'>" + message + "</td></tr>");
+    }
 }
 const getJWTWithAccount = (username) => {
+    user = username
     // console.log("${_csrf.parameterName}")
     const Http = new XMLHttpRequest();
-    const url=`http://${host}:8080/learn/hello`;
+    const url=`http://${host}/learn/hello`;
     Http.open("GET", url);
     Http.setRequestHeader("Authorization", `Basic ${btoa(
         `${username}:password`
@@ -188,7 +197,7 @@ $(function () {
         console.log($("#ip").val())
 
         const Http = new XMLHttpRequest();
-        const url=`http://${host}:8080/VPN/update`;
+        const url=`http://${host}/VPN/update`;
         Http.open("POST", url);
         if(_csrf) Http.setRequestHeader(_csrf.headerName, _csrf.token)
 
@@ -209,7 +218,7 @@ $(function () {
     });
     $( "#getIp" ).click(() => {
         const Http = new XMLHttpRequest();
-        const url=`http://${host}:8080/VPN/subscription`;
+        const url=`http://${host}/VPN/subscription`;
         Http.open("GET", url);
         Http.send();
         Http.onreadystatechange = (e) => {
@@ -222,7 +231,7 @@ $(function () {
     // $("#getCsrfToken").click(() => {
     //     // console.log("${_csrf.parameterName}")
     //     const Http = new XMLHttpRequest();
-    //     // const url=`http://${host}:8080/csrf`;
+    //     // const url=`http://${host}/csrf`;
     //     const url=`http://${hostLANIp}:8080/csrf`;
     //     Http.open("GET", url);
     //     Http.onreadystatechange = (e) => {
@@ -236,7 +245,7 @@ $(function () {
     // $("#getJWT").click(() => {
     //     // console.log("${_csrf.parameterName}")
     //     const Http = new XMLHttpRequest();
-    //     const url=`http://${host}:8080/learn/hello`;
+    //     const url=`http://${host}/learn/hello`;
     //     Http.open("GET", url);
     //     Http.onreadystatechange = (e) => {
     //         if(e.currentTarget.readyState === 4) {
@@ -253,7 +262,7 @@ $(function () {
     $("#subscribe").click(()=>subscribe())
     $("#testRole").click(()=>{
         const Http = new XMLHttpRequest();
-        const url=`http://${host}:8080/learn/testRole`;
+        const url=`http://${host}/learn/testRole`;
         Http.open("GET", url);
 
         Http.setRequestHeader("Authorization", `Basic ${btoa(

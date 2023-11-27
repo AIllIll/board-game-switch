@@ -105,7 +105,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("http://localhost:[*]", "http://192.168.1.*:[*]"));
-//        configuration.setAllowedOrigins(List.of("https://www.baidu.com"));
+        configuration.setAllowedOrigins(List.of("https://3229nr8294.yicp.fun/"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*")); // 默认不允许任何header
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
