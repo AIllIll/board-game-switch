@@ -1,9 +1,7 @@
-package com.wyc.bgswitch.web.controllers;
+package com.wyc.bgswitch.controller.web;
 
 import com.wyc.bgswitch.game.citadel.CitadelEffect;
-import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,7 +12,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController

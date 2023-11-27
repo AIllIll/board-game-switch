@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.web.websocket.entities;
+package com.wyc.bgswitch.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

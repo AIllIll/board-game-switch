@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.security;
+package com.wyc.bgswitch.controller.web;
 
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.CrossOrigin;

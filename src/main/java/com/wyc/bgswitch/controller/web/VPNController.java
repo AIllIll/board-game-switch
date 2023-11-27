@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.web.controllers;
+package com.wyc.bgswitch.controller.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

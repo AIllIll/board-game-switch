@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.web.controllers;
+package com.wyc.bgswitch.controller.web;
 
 import java.time.Instant;
 import java.util.stream.Collectors;

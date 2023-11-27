@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.security;
+package com.wyc.bgswitch.config.security;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;

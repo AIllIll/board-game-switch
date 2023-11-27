@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.security;
+package com.wyc.bgswitch.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
