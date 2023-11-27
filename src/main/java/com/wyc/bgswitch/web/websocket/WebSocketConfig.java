@@ -28,9 +28,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker(
-                "/topic", // 默认
-                "/common", // 通用
-                "/bg-citadel" // 富饶之城
+                "/public", // 默认
+                "/private" // 通用
         ); // 发布/订阅式的channel
         config.setApplicationDestinationPrefixes("/bgs"); // app应用，可以向restful一样向server发东西
         config.setUserDestinationPrefix("/user"); // 这是对单个用户发消息
@@ -54,8 +53,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         // 要求具备身份
         AuthorizationManager<Message<?>> messageAuthorizationManager = MessageMatcherDelegatingAuthorizationManager.builder()
-//                .simpTypeMatchers(SimpMessageType.CONNECT).permitAll()
-//                .simpMessageDestMatchers("/bgs/common/broadcast").hasAuthority("SCOPE_ROLE_USER")
+                .simpDestMatchers("/private", "/private/**").denyAll() // 禁用所有 /private
+                .simpMessageDestMatchers("/public", "/public/**").denyAll() // 禁止SEND /public
                 .anyMessage().hasRole("USER")
 //                .anyMessage().hasAuthority("SCOPE_ROLE_USER")
                 .build();

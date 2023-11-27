@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.common;
+package com.wyc.bgswitch.web.websocket.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,4 +11,6 @@ public class ChatMessage {
     private String fromUser;
     private String content;
     private String toUser;
+    private Boolean toLobby;
+    private String toRoom;
 }

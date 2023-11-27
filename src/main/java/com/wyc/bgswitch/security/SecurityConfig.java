@@ -96,10 +96,7 @@ public class SecurityConfig {
                         .username("wyc").password("password").roles("USER", "WYC")
                         .build(),
                 User.withDefaultPasswordEncoder()
-                        .username("user").password("password").roles("USER", "USER2")
-                        .build(),
-                User.withDefaultPasswordEncoder()
-                        .username("user3").password("password").roles("USER")
+                        .username("lzz").password("password").roles("USER", "LZZ")
                         .build()
         );
     }

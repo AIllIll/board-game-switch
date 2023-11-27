@@ -18,7 +18,7 @@ public class VPNController {
     @Value("${vpn.config}")
     private Resource awsConfigJSON;
 
-    private String ip = "176.34.20.197";
+    private String ip = "13.230.16.62";
 
     public VPNController(){
         System.out.println(String.format("Vpn ip: %s", this.ip));

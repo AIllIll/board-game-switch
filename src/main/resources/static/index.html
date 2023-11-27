@@ -17,10 +17,10 @@
 
     <div class="row">
         <div class="col-md-6">
-            <button id="getCsrfToken" class="btn btn-default" type="submit">get csrf token</button>
-            <button id="getJWT" class="btn btn-default" type="submit">get jwt</button>
+<!--            <button id="getCsrfToken" class="btn btn-default" type="submit">get csrf token</button>-->
+<!--            <button id="getJWT" class="btn btn-default" type="submit">get jwt</button>-->
             <button id="getJWTWithWyc" class="btn btn-default" type="submit">get jwt with wyc</button>
-            <button id="getJWTWithUser" class="btn btn-default" type="submit">get jwt with user</button>
+            <button id="getJWTWithLzz" class="btn btn-default" type="submit">get jwt with lzz</button>
             <button id="testRole" class="btn btn-default" type="submit">test role</button>
         </div>
     </div>
@@ -49,7 +49,7 @@
                     <button id="connect" class="btn btn-default" type="submit">Connect</button>
                     <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
                     </button>
-                    <button id="subscribe" class="btn btn-default" type="submit">Subscribe</button>
+<!--                    <button id="subscribe" class="btn btn-default" type="submit">Subscribe</button>-->
                 </div>
             </form>
         </div>
@@ -60,14 +60,18 @@
                     <label for="input">content</label>
                     <input type="text" id="input" class="form-control" placeholder="Your content here...">
                 </div>
-                <button id="broadcast" class="btn btn-default" type="submit">broadcast</button>
-                <button id="broadcast2" class="btn btn-default" type="submit">broadcast2</button>
-                <button id="question" class="btn btn-default" type="submit">question</button>
+<!--                <button id="broadcast" class="btn btn-default" type="submit">broadcast</button>-->
+<!--                <button id="broadcast2" class="btn btn-default" type="submit">broadcast2</button>-->
+<!--                <button id="question" class="btn btn-default" type="submit">question</button>-->
+                <button id="talkToLobby" class="btn btn-default" type="submit" disabled="disabled">speak in public</button>
                 <div class="form-group">
-                    <label for="input">user</label>
-                    <input type="text" id="input2" class="form-control" placeholder="Your toUser here...">
+                    <label for="input">to user</label>
+                    <select type="text" id="toUser" class="form-control" disabled="disabled">
+                        <option value="lzz">lzz</option>
+                        <option value="wyc">wyc</option>
+                    </select>
                 </div>
-                <button id="chat" class="btn btn-default" type="submit">chat</button>
+                <button id="chat" class="btn btn-default" type="submit" disabled="disabled">chat</button>
             </form>
         </div>
     </div>

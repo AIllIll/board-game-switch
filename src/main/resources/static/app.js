@@ -12,8 +12,6 @@ const stompClient = new StompJs.Client({
     heartbeatOutgoing: 4000,
 });
 
-let _csrf;
-let _jwt;
 
 // Fallback code
 if (typeof WebSocket !== 'function') {
@@ -26,6 +24,9 @@ if (typeof WebSocket !== 'function') {
     };
 }
 
+let _csrf;
+let _jwt;
+
 function extractMessage(data)  {
     console.log(data)
     return `[${data.headers.destination}] ${JSON.parse(data.body).fromUser}: ${JSON.parse(data.body).content}`
@@ -35,25 +36,14 @@ stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
     console.log("stompClient", stompClient)
-    // stompClient.subscribe('/user/common/question', (data) => {
-    //     showGreeting(extractMessage(data));
-    // });
-    // stompClient.subscribe('/common/broadcast', (data) => {
-    //     showGreeting(extractMessage(data));
-    // });
-    // stompClient.subscribe('/user/common/chat', (data) => {
-    //     showGreeting(extractMessage(data));
-    // });
+    subscribe()
 };
 
 function subscribe() {
-    stompClient.subscribe('/user/common/question', (data) => {
+    stompClient.subscribe('/public/lobby', (data) => {
         showGreeting(extractMessage(data));
     });
-    stompClient.subscribe('/common/broadcast', (data) => {
-        showGreeting(extractMessage(data));
-    });
-    stompClient.subscribe('/user/common/chat', (data) => {
+    stompClient.subscribe('/user/private/*', (data) => {
         showGreeting(extractMessage(data));
     });
 }
@@ -70,6 +60,9 @@ stompClient.onStompError = (frame) => {
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
+    $("#chat").prop("disabled", !connected);
+    $("#toUser").prop("disabled", !connected);
+    $("#talkToLobby").prop("disabled", !connected);
     if (connected) {
         $("#conversation").show();
     }
@@ -91,6 +84,7 @@ function connect() {
         stompClient.connectHeaders['JWT']= _jwt
     }
     console.log(_csrf, _jwt, stompClient)
+
     stompClient.activate();
 }
 
@@ -100,29 +94,35 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function broadcast() {
-    stompClient.publish({
-        destination: "/bgs/common/broadcast",
-        body: JSON.stringify({'content': $("#input").val()})
-    });
-}
-function broadcast2() {
-    stompClient.publish({
-        destination: "/bgs/common/broadcast2",
-        body: JSON.stringify({'content': $("#input").val()})
-    });
-}
+// function broadcast() {
+//     stompClient.publish({
+//         destination: "/bgs/common/broadcast",
+//         body: JSON.stringify({'content': $("#input").val()})
+//     });
+// }
+// function broadcast2() {
+//     stompClient.publish({
+//         destination: "/bgs/common/broadcast2",
+//         body: JSON.stringify({'content': $("#input").val()})
+//     });
+// }
 function question() {
     stompClient.publish({
         destination: "/bgs/common/question",
         body: JSON.stringify({'content': $("#input").val()})
     });
 }
-
-function chat(){
+function talkToLobby(){
     stompClient.publish({
-        destination: "/bgs/common/chat",
-        body: JSON.stringify({'toUser': $("#input2").val(),'content': $("#input").val()})
+        destination: `/bgs/chat/lobby`,
+        body: JSON.stringify({content: $("#input").val()})
+    });
+}
+function chat(){
+    console.log($("#toUser"))
+    stompClient.publish({
+        destination: `/bgs/chat/user/${$("#toUser").val()}`,
+        body: JSON.stringify({'toUser': $("#toUser").val(),'content': $("#input").val()})
     });
 }
 function tryConnect() {
@@ -177,11 +177,9 @@ $(function () {
     $("form").on('submit', (e) => e.preventDefault());
     $( "#connect" ).click(() => connect());
     $( "#disconnect" ).click(() => disconnect());
-    $( "#broadcast" ).click(() => broadcast());
-    $( "#broadcast2" ).click(() => broadcast2());
     $( "#question" ).click(() => question());
-    // $( "#chat" ).click(() => chat());
-    $( "#chat" ).click(() => tryConnect());
+    $( "#chat" ).click(() => chat());
+    $( "#talkToLobby" ).click(() => talkToLobby())
     $( "#updateIp" ).click(() => {
         var token = $("meta[name='_csrf']").attr("content");
         var header = $("meta[name='_csrf_header']").attr("content");
@@ -221,36 +219,36 @@ $(function () {
             }
         }
     })
-    $("#getCsrfToken").click(() => {
-        // console.log("${_csrf.parameterName}")
-        const Http = new XMLHttpRequest();
-        // const url=`http://${host}:8080/csrf`;
-        const url=`http://${hostLANIp}:8080/csrf`;
-        Http.open("GET", url);
-        Http.onreadystatechange = (e) => {
-            if(e.currentTarget.readyState === 4) {
-                console.log(JSON.parse(Http.responseText))
-                _csrf = JSON.parse(Http.responseText)
-            }
-        }
-        Http.send()
-    })
-    $("#getJWT").click(() => {
-        // console.log("${_csrf.parameterName}")
-        const Http = new XMLHttpRequest();
-        const url=`http://${host}:8080/learn/hello`;
-        Http.open("GET", url);
-        Http.onreadystatechange = (e) => {
-            if(e.currentTarget.readyState === 4) {
-                console.log(Http.responseText)
-                _jwt = Http.responseText.replace("Bearer ","")
-            }
-        }
-        Http.send()
-    })
+    // $("#getCsrfToken").click(() => {
+    //     // console.log("${_csrf.parameterName}")
+    //     const Http = new XMLHttpRequest();
+    //     // const url=`http://${host}:8080/csrf`;
+    //     const url=`http://${hostLANIp}:8080/csrf`;
+    //     Http.open("GET", url);
+    //     Http.onreadystatechange = (e) => {
+    //         if(e.currentTarget.readyState === 4) {
+    //             console.log(JSON.parse(Http.responseText))
+    //             _csrf = JSON.parse(Http.responseText)
+    //         }
+    //     }
+    //     Http.send()
+    // })
+    // $("#getJWT").click(() => {
+    //     // console.log("${_csrf.parameterName}")
+    //     const Http = new XMLHttpRequest();
+    //     const url=`http://${host}:8080/learn/hello`;
+    //     Http.open("GET", url);
+    //     Http.onreadystatechange = (e) => {
+    //         if(e.currentTarget.readyState === 4) {
+    //             console.log(Http.responseText)
+    //             _jwt = Http.responseText.replace("Bearer ","")
+    //         }
+    //     }
+    //     Http.send()
+    // })
 
     $("#getJWTWithWyc").click(() => getJWTWithAccount('wyc'))
-    $("#getJWTWithUser").click(() => getJWTWithAccount('user'))
+    $("#getJWTWithLzz").click(() => getJWTWithAccount('lzz'))
 
     $("#subscribe").click(()=>subscribe())
     $("#testRole").click(()=>{
