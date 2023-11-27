@@ -59,6 +59,7 @@ public class SecurityConfig {
         // @formatter:off
         http
                 .authorizeHttpRequests((authorize) -> authorize
+                                .requestMatchers("/dist**").permitAll()
                                 .requestMatchers("/bgs-websocket").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/app.js").permitAll()
