@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.game.citadel;
 
 import com.wyc.bgswitch.game.GameAction;
+
 import lombok.Getter;
 import lombok.Setter;
 

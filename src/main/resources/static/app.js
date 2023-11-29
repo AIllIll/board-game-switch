@@ -1,5 +1,5 @@
 const hostLANIp = '192.168.1.8'
-const hostDomain ='3229nr8294.yicp.fun'
+const hostDomain = '3229nr8294.yicp.fun'
 const localhost = "localhost"
 let http = "https"
 let host = hostDomain
@@ -29,7 +29,7 @@ if (typeof WebSocket !== 'function') {
 let _csrf;
 let _jwt;
 
-function extractMessage(data)  {
+function extractMessage(data) {
     console.log(data)
     return `[${data.headers.destination}] ${JSON.parse(data.body).fromUser}: ${JSON.parse(data.body).content}`
 }
@@ -68,23 +68,22 @@ function setConnected(connected) {
     $("#talkToLobby").prop("disabled", !connected);
     if (connected) {
         $("#conversation").show();
-    }
-    else {
+    } else {
         $("#conversation").hide();
     }
     $("#greetings").html("");
 }
 
 function connect() {
-    if(!_csrf) {
+    if (!_csrf) {
         console.log("no _csrf")
     } else {
-        stompClient.connectHeaders[_csrf.headerName]= _csrf.token
+        stompClient.connectHeaders[_csrf.headerName] = _csrf.token
     }
-    if(!_jwt) {
+    if (!_jwt) {
         console.log("no _jwt")
     } else {
-        stompClient.connectHeaders['JWT']= _jwt
+        stompClient.connectHeaders['JWT'] = _jwt
     }
     console.log(_csrf, _jwt, stompClient)
 
@@ -115,20 +114,23 @@ function question() {
         body: JSON.stringify({'content': $("#input").val()})
     });
 }
-function talkToLobby(){
+
+function talkToLobby() {
     stompClient.publish({
         destination: `/bgs/chat/lobby`,
         body: JSON.stringify({content: $("#input").val()})
     });
 }
-function chat(){
+
+function chat() {
     console.log($("#toUser"))
     stompClient.publish({
         destination: `/bgs/chat/user/${$("#toUser").val()}`,
-        body: JSON.stringify({'toUser': $("#toUser").val(),'content': $("#input").val()}),
+        body: JSON.stringify({'toUser': $("#toUser").val(), 'content': $("#input").val()}),
     });
     showGreeting(`[Send to ${$("#toUser").val()}]: ${$("#input").val()}`, true)
 }
+
 function tryConnect() {
     console.log(2)
     const ws = new WebSocket(
@@ -157,39 +159,39 @@ function tryConnect() {
 }
 
 
-
-function showGreeting(message, myself=false) {
-    if(myself) {
+function showGreeting(message, myself = false) {
+    if (myself) {
         $("#greetings").append("<tr><td style='background-color: #95ec69; text-align: right'>" + message + "</td></tr>");
     } else {
         $("#greetings").append("<tr><td style='background-color: #DDDDDD'>" + message + "</td></tr>");
     }
 }
+
 const getJWTWithAccount = (username) => {
     user = username
     // console.log("${_csrf.parameterName}")
     const Http = new XMLHttpRequest();
-    const url=`http://${host}/learn/hello`;
+    const url = `http://${host}/learn/hello`;
     Http.open("GET", url);
     Http.setRequestHeader("Authorization", `Basic ${btoa(
         `${username}:password`
     )}`)
     Http.onreadystatechange = (e) => {
-        if(e.currentTarget.readyState === 4) {
+        if (e.currentTarget.readyState === 4) {
             console.log(Http.responseText)
-            _jwt = Http.responseText.replace("Bearer ","")
+            _jwt = Http.responseText.replace("Bearer ", "")
         }
     }
     Http.send()
 }
 $(function () {
     $("form").on('submit', (e) => e.preventDefault());
-    $( "#connect" ).click(() => connect());
-    $( "#disconnect" ).click(() => disconnect());
-    $( "#question" ).click(() => question());
-    $( "#chat" ).click(() => chat());
-    $( "#talkToLobby" ).click(() => talkToLobby())
-    $( "#updateIp" ).click(() => {
+    $("#connect").click(() => connect());
+    $("#disconnect").click(() => disconnect());
+    $("#question").click(() => question());
+    $("#chat").click(() => chat());
+    $("#talkToLobby").click(() => talkToLobby())
+    $("#updateIp").click(() => {
         var token = $("meta[name='_csrf']").attr("content");
         var header = $("meta[name='_csrf_header']").attr("content");
         console.log($("meta[name='_csrf']"))
@@ -197,9 +199,9 @@ $(function () {
         console.log($("#ip").val())
 
         const Http = new XMLHttpRequest();
-        const url=`http://${host}/VPN/update`;
+        const url = `http://${host}/VPN/update`;
         Http.open("POST", url);
-        if(_csrf) Http.setRequestHeader(_csrf.headerName, _csrf.token)
+        if (_csrf) Http.setRequestHeader(_csrf.headerName, _csrf.token)
 
         // Http.setRequestHeader("Content-Type", "application/json")
         // Http.send(JSON.stringify({ip:2})) // 注意这个
@@ -216,13 +218,13 @@ $(function () {
             console.log(Http.responseText)
         }
     });
-    $( "#getIp" ).click(() => {
+    $("#getIp").click(() => {
         const Http = new XMLHttpRequest();
-        const url=`http://${host}/VPN/subscription`;
+        const url = `http://${host}/VPN/subscription`;
         Http.open("GET", url);
         Http.send();
         Http.onreadystatechange = (e) => {
-            if(e.currentTarget.readyState === 4) {
+            if (e.currentTarget.readyState === 4) {
                 console.log(JSON.parse(atob(atob(Http.responseText).substring(8))).add)
                 $("#vpnIp").html(JSON.parse(atob(atob(Http.responseText).substring(8))).add)
             }
@@ -259,10 +261,10 @@ $(function () {
     $("#getJWTWithWyc").click(() => getJWTWithAccount('wyc'))
     $("#getJWTWithLzz").click(() => getJWTWithAccount('lzz'))
 
-    $("#subscribe").click(()=>subscribe())
-    $("#testRole").click(()=>{
+    $("#subscribe").click(() => subscribe())
+    $("#testRole").click(() => {
         const Http = new XMLHttpRequest();
-        const url=`http://${host}/learn/testRole`;
+        const url = `http://${host}/learn/testRole`;
         Http.open("GET", url);
 
         Http.setRequestHeader("Authorization", `Basic ${btoa(

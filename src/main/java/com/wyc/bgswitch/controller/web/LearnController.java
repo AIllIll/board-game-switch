@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.controller.web;
 
 import com.wyc.bgswitch.game.citadel.CitadelEffect;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,7 +10,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -19,7 +25,7 @@ import java.util.stream.Collectors;
 public class LearnController {
     @Autowired
     JwtEncoder encoder;
-    private SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
 
     @Autowired
     public LearnController(SimpMessagingTemplate template) {
@@ -29,7 +35,7 @@ public class LearnController {
     @CrossOrigin
     @PreAuthorize("hasAnyRole('USER2')")
     @GetMapping("/testRole")
-    public String testRole(){
+    public String testRole() {
         return "66";
     }
 
@@ -51,7 +57,7 @@ public class LearnController {
                 .claim("scope", scope)
                 .build();
         // @formatter:on
-        return "Bearer "+ this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return "Bearer " + this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 //        return String.format("lllasfasfal %s!", name);
     }
 
@@ -72,18 +78,19 @@ public class LearnController {
                 .claim("scope", scope)
                 .build();
         // @formatter:on
-        return "Bearer "+ this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return "Bearer " + this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
+
     @GetMapping("/broadcast")
-    public String broadcast(@RequestParam()String msg) {
+    public String broadcast(@RequestParam() String msg) {
         System.out.println(123);
         this.template.convertAndSend(
                 "/topic/citadel",
-                new CitadelEffect(null,"", msg)
+                new CitadelEffect(null, "", msg)
         );
         this.template.convertAndSend(
                 "/bgs/citadel",
-                new CitadelEffect(null, "",msg)
+                new CitadelEffect(null, "", msg)
         );
         return msg;
     }

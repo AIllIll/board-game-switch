@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +55,7 @@ public class SecurityConfig {
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
@@ -107,7 +109,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("http://localhost:[*]", "http://192.168.1.*:[*]"));
         configuration.setAllowedOrigins(List.of("https://3229nr8294.yicp.fun/"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*")); // 默认不允许任何header
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

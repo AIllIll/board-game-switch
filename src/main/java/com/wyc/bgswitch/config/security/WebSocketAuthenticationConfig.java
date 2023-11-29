@@ -1,37 +1,35 @@
 package com.wyc.bgswitch.config.security;
 
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.simp.config.ChannelRegistration;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.messaging.context.AuthenticationPrincipalArgumentResolver;
 import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.Collection;
 import java.util.List;
-
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
-
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompCommand;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.util.LinkedMultiValueMap;
-
 import java.util.Map;
 
 
@@ -45,6 +43,7 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
     /**
      * 此处参考JwtBearerTokenAuthenticationConverter
      * 为了改变authorityPrefix，才写了这么一大段
+     *
      * @param jwt
      * @return
      */
@@ -53,7 +52,7 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
                 jwt.getIssuedAt(), jwt.getExpiresAt());
         Map<String, Object> attributes = jwt.getClaims();
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
-        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter= new JwtGrantedAuthoritiesConverter();
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix(""); // 默认的prefix是scope
         authenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         AbstractAuthenticationToken token = authenticationConverter.convert(jwt);

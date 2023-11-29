@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     @CrossOrigin
     @PostMapping("/login")
-    public String login(){
+    public String login() {
         return "666";
     }
+
     @GetMapping("/csrf")
     public CsrfToken csrf(CsrfToken token) {
         return token;
