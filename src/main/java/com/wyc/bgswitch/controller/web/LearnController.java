@@ -1,5 +1,6 @@
 package com.wyc.bgswitch.controller.web;
 
+import com.wyc.bgswitch.config.web.annotation.ApiRestController;
 import com.wyc.bgswitch.game.citadel.CitadelEffect;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
 
-@RestController
+@ApiRestController
 @RequestMapping("/learn")
 public class LearnController {
+    private final SimpMessagingTemplate template;
     @Autowired
     JwtEncoder encoder;
-    private final SimpMessagingTemplate template;
 
     @Autowired
     public LearnController(SimpMessagingTemplate template) {

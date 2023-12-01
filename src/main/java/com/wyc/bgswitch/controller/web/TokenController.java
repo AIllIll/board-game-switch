@@ -1,5 +1,7 @@
 package com.wyc.bgswitch.controller.web;
 
+import com.wyc.bgswitch.config.web.annotation.ApiRestController;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,7 +10,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * @author Josh Cummings
  */
 
-@RestController
+@ApiRestController
 public class TokenController {
     @Autowired
     JwtEncoder encoder;

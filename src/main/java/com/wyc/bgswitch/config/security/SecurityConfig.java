@@ -61,15 +61,11 @@ public class SecurityConfig {
         // @formatter:off
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                                .requestMatchers("/dist**").permitAll()
+                                .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/bgs-websocket").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/app.js").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/main.css").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/index.html").permitAll()
-                                .requestMatchers("/VPN/**").permitAll()
-                                .requestMatchers("/learn/**").authenticated()
                                 .requestMatchers("/error/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/**").permitAll()
                                 .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
                 )
