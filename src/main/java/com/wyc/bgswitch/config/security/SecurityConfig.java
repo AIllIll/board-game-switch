@@ -62,16 +62,19 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                                 .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/api/csrf").permitAll()
                                 .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/bgs-websocket").permitAll()
                                 .requestMatchers("/error/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/front/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/static/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/bgs/**").permitAll()
                                 .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/login", "/token"))
+                .csrf((csrf) -> csrf.ignoringRequestMatchers("/api/login", "/api/token"))
                 .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
 //                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 .cors(Customizer.withDefaults())

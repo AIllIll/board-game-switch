@@ -35,3 +35,4 @@ build/
 ### application ###
 /src/main/resources/dist
 /src/main/resources/web-build
+/src/main/resources/front

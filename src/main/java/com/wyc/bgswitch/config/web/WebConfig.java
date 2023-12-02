@@ -16,7 +16,6 @@ import java.time.Duration;
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
-    private static final String publicPath = "/bgs-front/";
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -31,8 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCacheControl(CacheControl.maxAge(Duration.ofDays(365)));
 
 
-        registry.addResourceHandler(publicPath + "**")
-                .addResourceLocations("classpath:/web-build/")
+        registry.addResourceHandler("/front/**", "/**")
+                .addResourceLocations("classpath:/dist/")
 //                .addResourceLocations("file:///./home/wyc/Desktop/develop/bgswitch-frontend/dist/")
                 .setCacheControl(CacheControl.maxAge(Duration.ofDays(365)));
 
@@ -42,6 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("redirect:/bgs");
         registry.addViewController("/static").setViewName("forward:/static/index.html");
-        registry.addViewController("/bgs/**").setViewName("forward:" + publicPath + "index.html");
+        registry.addViewController("/bgs/**").setViewName("forward:/front/index.html");
     }
 }

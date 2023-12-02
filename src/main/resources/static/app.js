@@ -171,8 +171,8 @@ const getJWTWithAccount = (username) => {
     user = username
     // console.log("${_csrf.parameterName}")
     const Http = new XMLHttpRequest();
-    const url = `http://${host}/learn/hello`;
-    Http.open("GET", url);
+    const url = `http://${host}/api/login`;
+    Http.open("POST", url);
     Http.setRequestHeader("Authorization", `Basic ${btoa(
         `${username}:password`
     )}`)
