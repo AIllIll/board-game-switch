@@ -1,11 +1,11 @@
-const hostLANIp = '192.168.1.8'
+const hostLANIp = '192.168.1.8:8080'
 const hostDomain = '3229nr8294.yicp.fun'
-const localhost = "localhost"
+const localhost = "localhost:8080"
 let http = "https"
-let host = hostDomain
+let host = localhost
 let user = null
 const stompClient = new StompJs.Client({
-    brokerURL: `ws://${host}/bgs-websocket`,
+    brokerURL: `ws://${host}/websocket`,
     debug: function (str) {
         console.log(str);
     },
@@ -22,7 +22,7 @@ if (typeof WebSocket !== 'function') {
     // to be used for each (re)connect
     stompClient.webSocketFactory = function () {
         // Note that the URL is different from the WebSocket URL
-        return new SockJS(`http://${host}/bgs-sockjs`);
+        return new SockJS(`http://${host}/sockjs`);
     };
 }
 
@@ -199,7 +199,7 @@ $(function () {
         console.log($("#ip").val())
 
         const Http = new XMLHttpRequest();
-        const url = `http://${host}/VPN/update`;
+        const url = `http://${host}/api/VPN/update`;
         Http.open("POST", url);
         if (_csrf) Http.setRequestHeader(_csrf.headerName, _csrf.token)
 
@@ -220,7 +220,7 @@ $(function () {
     });
     $("#getIp").click(() => {
         const Http = new XMLHttpRequest();
-        const url = `http://${host}/VPN/subscription`;
+        const url = `http://${host}/api/VPN/subscription`;
         Http.open("GET", url);
         Http.send();
         Http.onreadystatechange = (e) => {
@@ -264,7 +264,7 @@ $(function () {
     $("#subscribe").click(() => subscribe())
     $("#testRole").click(() => {
         const Http = new XMLHttpRequest();
-        const url = `http://${host}/learn/testRole`;
+        const url = `http://${host}/api/learn/testRole`;
         Http.open("GET", url);
 
         Http.setRequestHeader("Authorization", `Basic ${btoa(

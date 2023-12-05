@@ -17,7 +17,7 @@ prefix:
   api: "/api"
 
   ws:
-    application.destination: "/ws"
+    application.destination: "/bgs" # 这个可以和bgs.web相同，是因为这个走的是ws的长链接，不是路由了
     user.destination: "/user"
     endpoint:
       websocket: "/websocket"
