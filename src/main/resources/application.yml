@@ -11,3 +11,20 @@ jwt:
 
 vpn:
   config: classpath:aws-vpn.json
+
+
+prefix:
+  api: "/api"
+
+  ws:
+    application.destination: "/ws"
+    user.destination: "/user"
+    endpoint:
+      websocket: "/websocket"
+      sockjs: "/sockjs"
+
+  resources:
+    static: "/static"
+    bgs:
+      static: "/front"
+      web: "/bgs"

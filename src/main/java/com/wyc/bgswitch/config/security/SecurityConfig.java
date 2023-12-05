@@ -40,9 +40,21 @@ public class SecurityConfig {
 
     @Value("${jwt.public.key}")
     RSAPublicKey key;
-
     @Value("${jwt.private.key}")
     RSAPrivateKey priv;
+
+    @Value("${prefix.api}")
+    private String apiPrefix;
+    @Value("${prefix.ws.endpoint.websocket}")
+    private String websocketEndpoint;
+    @Value("${prefix.ws.endpoint.sockjs}")
+    private String sockjsEndpoint;
+    @Value("${prefix.resources.bgs.web}")
+    private String bgsWebPath;
+    @Value("${prefix.resources.bgs.static}")
+    private String bgsResourcesPath;
+    @Value("${prefix.resources.static}")
+    private String staticResourcesPath;
 
     @Bean
     JwtDecoder jwtDecoder() {
@@ -61,18 +73,21 @@ public class SecurityConfig {
         // @formatter:off
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                                .requestMatchers("/api/public/**").permitAll()
-                                .requestMatchers("/api/csrf").permitAll()
-                                .requestMatchers("/api/**").authenticated()
-                                .requestMatchers("/bgs-websocket").permitAll()
-                                .requestMatchers("/error/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/front/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/static/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/bgs/**").permitAll()
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers(apiPrefix+"/public/**").permitAll()
+                                .requestMatchers(apiPrefix+"/csrf").permitAll()
+                                .requestMatchers(apiPrefix+"/**").authenticated()
+                                .requestMatchers(websocketEndpoint).permitAll()
+                                .requestMatchers(sockjsEndpoint).permitAll()
+                                .requestMatchers("/error").permitAll()
+                                .requestMatchers(HttpMethod.GET,staticResourcesPath+"/**").permitAll() // 公共静态文件目录的映射地址
+                                .requestMatchers(HttpMethod.GET,bgsWebPath+"/**").permitAll() // 用户访问bgs的地址
+                                .requestMatchers(HttpMethod.GET,bgsResourcesPath+"/**").permitAll() // bgs文件目录的映射地址
+                                .requestMatchers(HttpMethod.GET,"/**").permitAll() // 由于metro的subfolder功能尚未上线，目前只能这样补救
                                 .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/api/login", "/api/token"))
+                .csrf((csrf) -> csrf.ignoringRequestMatchers(apiPrefix+"/login", apiPrefix+"/token"))
                 .httpBasic(Customizer.withDefaults())
 //                .formLogin(Customizer.withDefaults())
 //                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
