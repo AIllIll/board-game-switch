@@ -1,6 +1,6 @@
 package com.wyc.bgswitch.controller.websocket;
 
-import com.wyc.bgswitch.entities.ChatMessage;
+import com.wyc.bgswitch.entity.ChatMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;

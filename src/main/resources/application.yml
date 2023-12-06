@@ -22,9 +22,13 @@ prefix:
     endpoint:
       websocket: "/websocket"
       sockjs: "/sockjs"
+    channels:
+      chat: "/private/chat"
 
   resources:
     static: "/static"
     bgs:
       static: "/front"
       web: "/bgs"
+
+
