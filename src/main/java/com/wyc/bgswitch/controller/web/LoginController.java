@@ -3,6 +3,8 @@ package com.wyc.bgswitch.controller.web;
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -12,18 +14,34 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
 
 @ApiRestController
 public class LoginController {
+    private final JwtEncoder encoder;
+    private final AuthenticationManager authenticationManager;
+
     @Autowired
-    JwtEncoder encoder;
+    public LoginController(AuthenticationManager myAuthenticationManager, JwtEncoder encoder) {
+        this.authenticationManager = myAuthenticationManager;
+        this.encoder = encoder;
+    }
+
 
     @CrossOrigin
     @PostMapping("/login")
-    public String token(Authentication authentication) {
+    public String token(
+            Authentication authentication,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String password
+    ) {
+        if (authentication == null) {
+            Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
+            authentication = this.authenticationManager.authenticate(authenticationRequest);
+        }
         Instant now = Instant.now();
         long expiry = 36000L;
         // @formatter:off
