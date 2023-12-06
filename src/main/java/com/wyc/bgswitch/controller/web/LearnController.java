@@ -33,7 +33,7 @@ public class LearnController {
     }
 
     @CrossOrigin
-    @PreAuthorize("hasAnyRole('USER2')")
+    @PreAuthorize("hasAnyRole('WYC')")
     @GetMapping("/testRole")
     public String testRole() {
         return "66";

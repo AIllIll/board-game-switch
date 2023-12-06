@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -18,17 +20,22 @@ import java.util.stream.Collectors;
 public class JwtUtils {
 
     private final JwtEncoder encoder;
+    private final JwtDecoder decoder;
+
+    private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
     @Autowired
-    public JwtUtils(JwtEncoder encoder) {
+    public JwtUtils(JwtEncoder encoder, JwtDecoder decoder, JwtAuthenticationConverter jwtAuthenticationConverter) {
         this.encoder = encoder;
+        this.decoder = decoder;
+        this.jwtAuthenticationConverter = jwtAuthenticationConverter;
     }
 
     public String generateTokenFromAuth(Authentication authentication) {
         Instant now = Instant.now();
         long expiry = 36000L;
         // @formatter:off
-        String scope = authentication.getAuthorities().stream()
+        String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -36,12 +43,12 @@ public class JwtUtils {
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiry))
                 .subject(authentication.getName())
-                .claim("scope", scope)
+                .claim("authorities", authorities)
                 .build();
         return "Bearer " + this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
-    // todo
-    public String generateAuthFromToken() {
-        return null;
+
+    public Authentication generateAuthFromToken(String token) {
+        return this.jwtAuthenticationConverter.convert(this.decoder.decode(token));
     }
 }

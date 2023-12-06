@@ -6,6 +6,7 @@ import com.wyc.bgswitch.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -26,6 +27,7 @@ public class ChatWsController {
     }
 
     @MessageMapping("/lobby")
+    @PreAuthorize("hasAnyRole('USER')")
     public void sendToLobby(ChatMessage msg, Principal principal) {
         msg.setFromUser(principal.getName());
         msg.setToLobby(true);
