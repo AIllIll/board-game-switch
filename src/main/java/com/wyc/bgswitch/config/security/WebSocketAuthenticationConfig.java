@@ -2,7 +2,7 @@ package com.wyc.bgswitch.config.security;
 
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
-import com.wyc.bgswitch.utils.JwtUtils;
+import com.wyc.bgswitch.service.JwtService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ import java.util.List;
 public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConfigurer {
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private JwtService jwtUtils;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {

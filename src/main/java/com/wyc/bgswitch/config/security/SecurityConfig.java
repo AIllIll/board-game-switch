@@ -48,24 +48,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
-        http
-                .authorizeHttpRequests((authorize) -> authorize
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers(apiPrefix+"/public/**").permitAll()
-                                .requestMatchers(apiPrefix+"/csrf").permitAll()
-                                .requestMatchers(apiPrefix+"/**").authenticated()
-                                .requestMatchers(websocketEndpoint).permitAll()
-                                .requestMatchers(sockjsEndpoint).permitAll()
-                                .requestMatchers("/error").permitAll()
-                                .requestMatchers(HttpMethod.GET,staticResourcesPath+"/**").permitAll() // 公共静态文件目录的映射地址
-                                .requestMatchers(HttpMethod.GET,bgsWebPath+"/**").permitAll() // 用户访问bgs的地址
-                                .requestMatchers(HttpMethod.GET,bgsResourcesPath+"/**").permitAll() // bgs文件目录的映射地址
-                                .requestMatchers(HttpMethod.GET,"/**").permitAll() // 由于metro的subfolder功能尚未上线，目前只能这样补救
-                                .anyRequest().authenticated()
+        http.authorizeHttpRequests((authorize) -> authorize
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers(apiPrefix+"/public/**").permitAll()
+                    .requestMatchers(apiPrefix+"/csrf").permitAll()
+                    .requestMatchers(HttpMethod.POST, apiPrefix+"/login").permitAll()
+                    .requestMatchers(apiPrefix+"/**").authenticated()
+                    .requestMatchers(websocketEndpoint).permitAll()
+                    .requestMatchers(sockjsEndpoint).permitAll()
+                    .requestMatchers("/error").permitAll()
+                    .requestMatchers(HttpMethod.GET,staticResourcesPath+"/**").permitAll() // 公共静态文件目录的映射地址
+                    .requestMatchers(HttpMethod.GET,bgsWebPath+"/**").permitAll() // 用户访问bgs的地址
+                    .requestMatchers(HttpMethod.GET,bgsResourcesPath+"/**").permitAll() // bgs文件目录的映射地址
+                    .requestMatchers(HttpMethod.GET,"/**").permitAll() // 由于metro的subfolder功能尚未上线，目前只能这样补救
+                    .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers(apiPrefix+"/login", apiPrefix+"/token"))
-                .httpBasic(Customizer.withDefaults())
+                .csrf((csrf) -> csrf.ignoringRequestMatchers(
+                        apiPrefix+"/login",
+                        apiPrefix+"/token",
+                        apiPrefix+"/refresh"
+                )).httpBasic(Customizer.withDefaults())
 //                .formLogin(Customizer.withDefaults())
 //                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
