@@ -24,6 +24,7 @@ prefix:
       sockjs: "/sockjs"
     channels:
       chat: "/private/chat"
+      room: "/private/room"
 
   resources:
     static: "/static"

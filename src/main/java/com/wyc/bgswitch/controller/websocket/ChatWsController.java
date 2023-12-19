@@ -1,9 +1,10 @@
 package com.wyc.bgswitch.controller.websocket;
 
 import com.wyc.bgswitch.entity.ChatMessage;
-import com.wyc.bgswitch.service.ChatService;
+import com.wyc.bgswitch.service.ChatMessageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,16 +13,19 @@ import org.springframework.stereotype.Controller;
 import java.security.Principal;
 import java.util.Date;
 
+/**
+ * @author wyc
+ */
 @Controller
 @MessageMapping("/chat")
 public class ChatWsController {
 
     private final SimpMessagingTemplate messaging;
 
-    private final ChatService chatService;
+    private final ChatMessageService chatService;
 
     @Autowired
-    ChatWsController(SimpMessagingTemplate messaging, ChatService chatService) {
+    ChatWsController(SimpMessagingTemplate messaging, ChatMessageService chatService) {
         this.messaging = messaging;
         this.chatService = chatService;
     }
@@ -47,16 +51,16 @@ public class ChatWsController {
         chatService.sendToUser(msg.getToUser(), msg);
     }
 
-    @MessageMapping("/room")
-    public void sendToRoom(ChatMessage msg, Principal principal) {
+    @MessageMapping("/room/{roomId}")
+    public void sendToRoom(@DestinationVariable String roomId, ChatMessage msg, Principal principal) {
         System.out.printf(
                 "[%s] Received msg from %s to room %s: %s%n",
                 new Date(msg.getCreatedAt()),
                 msg.getFromUser(),
-                msg.getToRoom(),
+                roomId,
                 msg.getContent()
         );
         msg.setFromUser(principal.getName());
-        chatService.sendToRoom(msg.getToRoom(), msg);
+        chatService.sendToRoom(roomId, msg);
     }
 }

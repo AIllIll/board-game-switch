@@ -1,6 +1,11 @@
 package com.wyc.bgswitch.game;
 
-public abstract class GameAction {
-    String action;
+import com.wyc.bgswitch.game.base.enums.GameActionType;
+
+public record GameAction(
+        String gameId,
+        GameActionType type,
+        Long timestamp
+) {
 
 }

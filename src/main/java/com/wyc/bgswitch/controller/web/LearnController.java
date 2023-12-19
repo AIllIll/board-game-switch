@@ -1,7 +1,6 @@
 package com.wyc.bgswitch.controller.web;
 
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
-import com.wyc.bgswitch.game.citadel.CitadelEffect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -79,20 +78,6 @@ public class LearnController {
                 .build();
         // @formatter:on
         return "Bearer " + this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-    }
-
-    @GetMapping("/broadcast")
-    public String broadcast(@RequestParam() String msg) {
-        System.out.println(123);
-        this.template.convertAndSend(
-                "/topic/citadel",
-                new CitadelEffect(null, "", msg)
-        );
-        this.template.convertAndSend(
-                "/bgs/citadel",
-                new CitadelEffect(null, "", msg)
-        );
-        return msg;
     }
 
 
