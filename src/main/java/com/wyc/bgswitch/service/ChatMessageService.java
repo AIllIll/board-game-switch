@@ -9,15 +9,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author wyc
+ */
 @Service
-public class ChatService {
+public class ChatMessageService {
     private final SimpMessagingTemplate messaging;
     private final RoomService roomService;
     @Value("${prefix.ws.channels.chat}")
     private String channelPrefixChat;
 
     @Autowired
-    ChatService(SimpMessagingTemplate messaging, RoomService citadelService) {
+    ChatMessageService(SimpMessagingTemplate messaging, RoomService citadelService) {
         this.messaging = messaging;
         this.roomService = citadelService;
     }

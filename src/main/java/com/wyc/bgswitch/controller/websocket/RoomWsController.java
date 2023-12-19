@@ -1,43 +1,44 @@
 package com.wyc.bgswitch.controller.websocket;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wyc.bgswitch.entity.ChatMessage;
-import com.wyc.bgswitch.service.ChatService;
+import com.wyc.bgswitch.service.ChatMessageService;
 import com.wyc.bgswitch.service.RoomService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
 import jakarta.annotation.security.RolesAllowed;
 
+/**
+ * @author wyc
+ */
 @Controller
-@MessageMapping("/citadel")
-public class CitadelWsController {
+@MessageMapping("/room")
+public class RoomWsController {
 
-    private final ChatService chatService;
+    private final ChatMessageService chatService;
     private final RoomService roomService;
 
     @Autowired
-    CitadelWsController(ChatService chatService, RoomService citadelService) {
+    RoomWsController(ChatMessageService chatService, RoomService citadelService) {
         this.chatService = chatService;
         this.roomService = citadelService;
     }
 
 
-    @MessageMapping("/room")
+    @MessageMapping("/{roomId}/enter")
     @RolesAllowed("USER")
-    public void onUserEnterRoom(@Payload JSONObject payload, Authentication authentication) {
-        String room = (String) payload.get("room");
+    public void onUserEnterRoom(@DestinationVariable String roomId, Authentication authentication) {
         String user = authentication.getName();
-        System.out.println(room);
+        System.out.println(roomId);
         System.out.println(user);
-        roomService.userEnterRoom(user, room);
+        roomService.userEnterRoom(user, roomId);
         ChatMessage msg = new ChatMessage();
-        msg.setContent(String.format("%s enter room %s.", user, room));
+        msg.setContent(String.format("%s enter room %s.", user, roomId));
         msg.setIsSystemMsg(true);
-        chatService.sendToRoom(room, msg);
+        chatService.sendToRoom(roomId, msg);
     }
 }
