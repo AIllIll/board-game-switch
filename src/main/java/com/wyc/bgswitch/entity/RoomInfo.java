@@ -3,17 +3,15 @@ package com.wyc.bgswitch.entity;
 import java.util.LinkedList;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * @author wyc
  */
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class RoomInfo {
-    String id;
-    String gameId;
-    LinkedList<String> users;
+    private String id;
+    private String gameId;
+    private LinkedList<String> users;
 }
