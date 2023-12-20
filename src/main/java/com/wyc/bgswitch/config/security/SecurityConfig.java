@@ -53,6 +53,7 @@ public class SecurityConfig {
                     .requestMatchers(apiPrefix+"/public/**").permitAll()
                     .requestMatchers(apiPrefix+"/csrf").permitAll()
                     .requestMatchers(HttpMethod.POST, apiPrefix+"/login").permitAll()
+                    .requestMatchers(apiPrefix+"/learn/**").permitAll()
                     .requestMatchers(apiPrefix+"/**").authenticated()
                     .requestMatchers(websocketEndpoint).permitAll()
                     .requestMatchers(sockjsEndpoint).permitAll()
@@ -67,7 +68,8 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.ignoringRequestMatchers(
                         apiPrefix+"/login",
                         apiPrefix+"/token",
-                        apiPrefix+"/refresh"
+                        apiPrefix+"/refresh",
+                        apiPrefix+"/learn/**"
                 )).httpBasic(Customizer.withDefaults())
 //                .formLogin(Customizer.withDefaults())
 //                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

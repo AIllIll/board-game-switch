@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.controller.web;
 
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
+import com.wyc.bgswitch.service.RedisService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,16 +20,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
+/**
+ * @author wyc
+ */
 @ApiRestController
 @RequestMapping("/learn")
 public class LearnController {
     private final SimpMessagingTemplate template;
-    @Autowired
-    JwtEncoder encoder;
+    private final RedisService redisService;
+    private final JwtEncoder encoder;
 
     @Autowired
-    public LearnController(SimpMessagingTemplate template) {
+    public LearnController(SimpMessagingTemplate template, RedisService redisService, JwtEncoder encoder) {
         this.template = template;
+        this.redisService = redisService;
+        this.encoder = encoder;
     }
 
     @CrossOrigin
@@ -80,5 +86,12 @@ public class LearnController {
         return "Bearer " + this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
+    @CrossOrigin
+    @GetMapping("/redis/list")
+    public void redis() {
+        redisService.addToList("test", "666");
+        redisService.addToHash("test_hash", "t", "666");
+        redisService.addValue("test_key2", "676");
+    }
 
 }
