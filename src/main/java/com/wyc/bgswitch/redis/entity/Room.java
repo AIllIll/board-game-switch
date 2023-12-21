@@ -8,19 +8,20 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.util.LinkedList;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 
 /**
  * @author wyc
  */
 @RedisHash("/bgs/room")
 @Data
-@AllArgsConstructor
 public class Room {
     @Id
+    @NonNull
     private String id;
-    private LinkedList<User> users;
+    @NonNull
+    private LinkedList<String> users;
     @Reference
     private CitadelGame game;
 }

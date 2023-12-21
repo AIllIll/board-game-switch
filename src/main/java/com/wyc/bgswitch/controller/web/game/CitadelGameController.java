@@ -1,7 +1,7 @@
 package com.wyc.bgswitch.controller.web.game;
 
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
-import com.wyc.bgswitch.game.citadel.CitadelGameConfig;
+import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
 import com.wyc.bgswitch.service.RoomService;
 
 import org.springframework.beans.factory.annotation.Autowired;

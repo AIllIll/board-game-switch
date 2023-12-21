@@ -18,13 +18,13 @@ public class RedisService {
     // inject the actual operations
     private final RedisOperations<String, Object> operations;
     // inject the template as ListOperations
-    @Resource(name = "redisTemplate")
+    @Resource(name = "myRedisTemplate")
     private ListOperations<String, Object> listOps;
-    @Resource(name = "redisTemplate")
+    @Resource(name = "myRedisTemplate")
     private HashOperations<String, String, Object> hashOps;
 
     @Autowired
-    public RedisService(@Qualifier("redisTemplate") RedisOperations<String, Object> operations) {
+    public RedisService(@Qualifier("myRedisTemplate") RedisOperations<String, Object> operations) {
         this.operations = operations;
     }
 

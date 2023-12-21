@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.redis.entity.game.citadel;
+package com.wyc.bgswitch.game.citadel.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +8,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class Player {
-    private Integer id;
+public class CitadelPlayer {
     private String userId;
     private Integer score;
 }
