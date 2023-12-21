@@ -41,7 +41,4 @@ public class RedisService {
     public void addValue(String redisKey, Object value) {
         operations.opsForValue().set(redisKey, value);
     }
-
-//    public List<String> getList(String key) {
-//    }
 }
