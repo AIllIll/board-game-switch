@@ -45,7 +45,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisScript<Boolean> casScript() {
+    public RedisScript<Boolean> simpleCasScript() {
         Resource scriptSource = new ClassPathResource("redis/check-and-set.lua");
         return RedisScript.of(scriptSource, Boolean.class);
     }

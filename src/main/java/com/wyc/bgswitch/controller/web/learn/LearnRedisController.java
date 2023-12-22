@@ -42,7 +42,7 @@ public class LearnRedisController {
     private final UserRepository userRepo;
     private final CitadelGameRepository gameRepo;
     private final RoomRepository roomRepo;
-    private final RedisScript<Boolean> casScript;
+    private final RedisScript<Boolean> simpleCasScript;
 
     private final RedisKeyValueTemplate keyValueTemplate;
     HashMapper<Object, byte[], byte[]> mapper = new ObjectHashMapper();
@@ -56,14 +56,14 @@ public class LearnRedisController {
             UserRepository userRepo,
             CitadelGameRepository gameRepo,
             RoomRepository roomRepo,
-            RedisScript<Boolean> casScript,
+            RedisScript<Boolean> simpleCasScript,
             RedisKeyValueTemplate keyValueTemplate) {
         this.operations = operations;
         this.redisService = redisService;
         this.userRepo = userRepo;
         this.gameRepo = gameRepo;
         this.roomRepo = roomRepo;
-        this.casScript = casScript;
+        this.simpleCasScript = simpleCasScript;
         this.keyValueTemplate = keyValueTemplate;
     }
 
@@ -168,7 +168,7 @@ public class LearnRedisController {
             }
             System.out.println(numStr);
             Boolean res = operations.execute(
-                    casScript,
+                    simpleCasScript,
                     Collections.singletonList(redisKey),
                     num, (num + 1), true
             );
@@ -206,7 +206,7 @@ public class LearnRedisController {
             }
             System.out.println(newObj.num);
             Boolean res = operations.execute(
-                    casScript,
+                    simpleCasScript,
                     Collections.singletonList(redisKey),
                     obj, newObj, true
             );
