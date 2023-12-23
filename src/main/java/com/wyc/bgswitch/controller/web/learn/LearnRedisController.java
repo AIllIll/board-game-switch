@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.hash.HashMapper;
 import org.springframework.data.redis.hash.ObjectHashMapper;
+import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import jakarta.annotation.Resource;
 
@@ -37,6 +39,7 @@ import jakarta.annotation.Resource;
 @ApiRestController
 @RequestMapping("/learn/redis")
 public class LearnRedisController {
+    private final RedisLockRegistry redisLockRegistry;
     private final RedisOperations<String, Object> operations;
     private final RedisService redisService;
     private final UserRepository userRepo;
@@ -51,13 +54,14 @@ public class LearnRedisController {
 
     @Autowired
     public LearnRedisController(
-            @Qualifier("myRedisTemplate") RedisOperations<String, Object> operations,
+            RedisLockRegistry redisLockRegistry, @Qualifier("myRedisTemplate") RedisOperations<String, Object> operations,
             RedisService redisService,
             UserRepository userRepo,
             CitadelGameRepository gameRepo,
             RoomRepository roomRepo,
             RedisScript<Boolean> simpleCasScript,
             RedisKeyValueTemplate keyValueTemplate) {
+        this.redisLockRegistry = redisLockRegistry;
         this.operations = operations;
         this.redisService = redisService;
         this.userRepo = userRepo;
@@ -121,7 +125,7 @@ public class LearnRedisController {
     /**
      * 测试redisTemplate的线程安全:
      * Chrome打开一个匿名模式和一个普通模式的窗口，不能全用普通，因为浏览器会合并你的请求为同一个http连接，那样就触发不了多线程
-     * 同时访问：http://localhost:8080/api/learn/redis/threadSafety?increasement=10000
+     * 同时访问：http://localhost:8080/api/learn/redis/threadSafety?increment=10000
      * 会发现线程不安全
      *
      * @param increment
@@ -274,6 +278,28 @@ public class LearnRedisController {
     public Room serializer3(@RequestParam String roomId) {
 
         return (Room) mapper.fromHash(hashOps.entries("/bgs/room:" + roomId));
+    }
+
+    /**
+     * {@link LearnRedisController#threadSafety}
+     * 通过redis lock来保证redisTemplate的线程安全:
+     * Chrome打开一个匿名模式和一个普通模式的窗口，不能全用普通，因为浏览器会合并你的请求为同一个http连接，那样就触发不了多线程
+     * 同时访问：http://localhost:8080/api/learn/redis/threadSafetyWithLock?increment=10000
+     * 结果线程安全
+     *
+     * @param increment
+     */
+    @GetMapping("/threadSafetyWithLock")
+    public void threadSafetyWithLock(@RequestParam Integer increment) {
+        String redisKey = "/test/threadSafety";
+        Lock lock = redisLockRegistry.obtain(redisKey);
+        lock.lock();
+        // 为了省事就直接用redis key当lock key了，因为已经配置好了lock前缀，实际的key应该是"redis-lock:/test/threadSafety"
+        try {
+            this.threadSafety(increment);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private record Lua2TestObj(Integer num) implements Serializable {
