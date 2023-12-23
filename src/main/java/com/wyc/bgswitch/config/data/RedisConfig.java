@@ -44,9 +44,29 @@ public class RedisConfig {
         return template;
     }
 
+    /**
+     * key-value的cas
+     *
+     * @return
+     */
     @Bean
     public RedisScript<Boolean> simpleCasScript() {
         Resource scriptSource = new ClassPathResource("redis/check-and-set.lua");
+        return RedisScript.of(scriptSource, Boolean.class);
+    }
+
+    /**
+     * hash的cas
+     * KEYS: [redisKey, versionFieldKey, fieldKey1, fieldKey2...]
+     * 第3个KEYS开始是实际要set的field
+     * ARGV: [currentVersion, newVersion, fieldValue1, fieldValue2...]
+     * 第2个ARGV是新的version值，第3个开始是实际要set的field
+     *
+     * @return
+     */
+    @Bean
+    public RedisScript<Boolean> hashCasScript() {
+        Resource scriptSource = new ClassPathResource("redis/cas-hash.lua");
         return RedisScript.of(scriptSource, Boolean.class);
     }
 }

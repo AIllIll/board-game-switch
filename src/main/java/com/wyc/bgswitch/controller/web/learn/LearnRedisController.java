@@ -69,9 +69,9 @@ public class LearnRedisController {
 
     @GetMapping("/list")
     public void redis() {
-        redisService.addToList("test", "666");
+        redisService.addToListLeft("test", "666");
         redisService.addToHash("test_hash", "t", "666");
-        redisService.addValue("test_key2", "676");
+        redisService.setValue("test_key2", "676");
     }
 
     /**
