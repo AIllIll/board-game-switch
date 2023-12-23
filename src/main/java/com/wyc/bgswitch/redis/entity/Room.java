@@ -14,7 +14,7 @@ import lombok.NonNull;
 /**
  * @author wyc
  */
-@RedisHash("/bgs/room")
+@RedisHash("bgs/repo/room")
 @Data
 public class Room {
     @Id

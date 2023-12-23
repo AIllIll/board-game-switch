@@ -12,7 +12,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.integration.redis.util.RedisLockRegistry;
 
 import java.time.Duration;
 
@@ -22,7 +21,6 @@ import java.time.Duration;
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
-
     @Bean
     public LettuceConnectionFactory connectionFactory() {
 
@@ -33,15 +31,6 @@ public class RedisConfig {
                 .build();
 
         return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 16379), clientConfig);
-    }
-
-    @Bean(destroyMethod = "destroy")
-    public RedisLockRegistry redisLockRegistry(RedisConnectionFactory connectionFactory) {
-        return new RedisLockRegistry(
-                connectionFactory,
-                "redis-lock",
-                10000L // 默认是60000L即60s
-        );
     }
 
     @Bean

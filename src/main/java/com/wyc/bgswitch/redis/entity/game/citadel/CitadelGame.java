@@ -15,7 +15,7 @@ import lombok.NonNull;
 /**
  * @author wyc
  */
-@RedisHash("/bgs/game/citadel")
+@RedisHash("bgs/repo/game/citadel")
 @Data
 public class CitadelGame {
     @Id
