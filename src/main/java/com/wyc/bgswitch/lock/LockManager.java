@@ -6,6 +6,7 @@ import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -72,6 +73,7 @@ public class LockManager {
             }
 
             public void unLock() {
+                Collections.reverse(locks);
                 locks.forEach(Lock::unlock);
             }
 

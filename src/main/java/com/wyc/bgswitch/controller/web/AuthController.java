@@ -1,17 +1,15 @@
 package com.wyc.bgswitch.controller.web;
 
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
+import com.wyc.bgswitch.service.AuthService;
 import com.wyc.bgswitch.service.JwtService;
 import com.wyc.bgswitch.utils.debug.Debug;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,19 +19,26 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @author wyc
  */
 @ApiRestController
-public class LoginController {
-    private final Logger logger = LogManager.getLogger(LoginController.class);
-
+public class AuthController {
+    private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtUtils;
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, JwtService jwtUtils) {
+    public AuthController(AuthService authService, AuthenticationManager authenticationManager, JwtService jwtUtils) {
+        this.authService = authService;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
     }
 
-    @CrossOrigin
+    @PostMapping("/register")
+    @Debug
+    public void register(
+            @RequestBody LoginRequestParams loginRequestParams
+    ) {
+        authService.register(loginRequestParams.username(), loginRequestParams.password());
+    }
+
     @PostMapping("/login")
     @Debug
     public String token(
@@ -50,7 +55,6 @@ public class LoginController {
         return jwtUtils.generateTokenFromAuth(authentication);
     }
 
-    @CrossOrigin
     @PostMapping("/refresh")
     @Debug
     public String refreshToken(@RequestHeader("Authorization") String token) {

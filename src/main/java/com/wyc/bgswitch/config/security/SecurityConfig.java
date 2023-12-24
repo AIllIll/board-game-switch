@@ -12,11 +12,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -25,6 +23,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author wyc
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -53,6 +54,7 @@ public class SecurityConfig {
                     .requestMatchers(apiPrefix+"/public/**").permitAll()
                     .requestMatchers(apiPrefix+"/csrf").permitAll()
                     .requestMatchers(HttpMethod.POST, apiPrefix+"/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, apiPrefix+"/register").permitAll()
                     .requestMatchers(apiPrefix+"/learn/**").permitAll()
                     .requestMatchers(apiPrefix+"/**").authenticated()
                     .requestMatchers(websocketEndpoint).permitAll()
@@ -67,6 +69,7 @@ public class SecurityConfig {
                 )
                 .csrf((csrf) -> csrf.ignoringRequestMatchers(
                         apiPrefix+"/login",
+                        apiPrefix+"/register",
                         apiPrefix+"/token",
                         apiPrefix+"/refresh",
                         apiPrefix+"/learn/**"
@@ -88,13 +91,13 @@ public class SecurityConfig {
     }
 
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(
-                User.withDefaultPasswordEncoder().username("wyc").password("password").roles("USER", "WYC").build(),
-                User.withDefaultPasswordEncoder().username("lzz").password("password").roles("USER", "LZZ").build()
-        );
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return new InMemoryUserDetailsManager(
+//                User.withDefaultPasswordEncoder().username("wyc").password("password").roles("USER", "WYC").build(),
+//                User.withDefaultPasswordEncoder().username("lzz").password("password").roles("USER", "LZZ").build()
+//        );
+//    }
 
     @Bean(name = "myAuthenticationManager")
     public AuthenticationManager myAuthenticationManager(
