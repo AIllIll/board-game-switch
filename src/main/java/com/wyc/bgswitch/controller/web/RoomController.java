@@ -33,7 +33,7 @@ public class RoomController {
     public RoomInfo getRoomInfo(@PathVariable String roomId) {
         return new RoomInfo(
                 roomId,
-                roomService.getRoomGame(roomId),
+                roomService.getCurrentGame(roomId),
                 roomService.getRoomUsers(roomId)
         );
     }
@@ -49,6 +49,6 @@ public class RoomController {
     @Deprecated
     @GetMapping("/{roomId}/game")
     public String getRoomGame(@PathVariable String roomId) {
-        return roomService.getRoomGame(roomId);
+        return roomService.getCurrentGame(roomId);
     }
 }

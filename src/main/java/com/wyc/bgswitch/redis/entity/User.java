@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * @author wyc
  */
-@RedisHash("/bgs/user")
+@RedisHash("bgs/repo/user")
 @Data
 @AllArgsConstructor
 public class User {
