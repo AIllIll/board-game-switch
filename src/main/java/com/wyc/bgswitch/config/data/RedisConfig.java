@@ -44,6 +44,17 @@ public class RedisConfig {
         return template;
     }
 
+//    @Bean
+//    RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+//        StringRedisTemplate template = new StringRedisTemplate();
+//        template.setKeySerializer(StringRedisSerializer.UTF_8);
+//        template.setValueSerializer(StringRedisSerializer.UTF_8);
+//        template.setHashKeySerializer(StringRedisSerializer.UTF_8);
+//        template.setHashValueSerializer(StringRedisSerializer.UTF_8);
+//        template.setConnectionFactory(connectionFactory);
+//        return template;
+//    }
+
     /**
      * key-value的cas
      *

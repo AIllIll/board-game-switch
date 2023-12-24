@@ -28,7 +28,7 @@ public class CitadelGameController {
     public String createGame(@RequestBody CreateGameRequestBody body) {
         String roomId = body.roomId();
         String gameId = "/citadel/" + roomId; // todo create game
-        roomService.setRoomGame(roomId, "game");
+        roomService.attachGameToRoom(roomId, "game");
         return gameId;
     }
 

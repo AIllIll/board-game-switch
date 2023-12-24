@@ -10,8 +10,6 @@ import org.springframework.integration.redis.util.RedisLockRegistry;
  */
 @Configuration
 public class RedisLockConfig {
-    public static final String ROOM_LOCK_PREFIX = "room_";
-
     @Bean(destroyMethod = "destroy")
     public RedisLockRegistry redisLockRegistry(RedisConnectionFactory connectionFactory) {
         return new RedisLockRegistry(

@@ -1,14 +1,18 @@
 package com.wyc.bgswitch.service;
 
-import com.wyc.bgswitch.entity.RoomInfo;
+import static com.wyc.bgswitch.config.lock.RedisLockPrefix.LOCK_PREFIX_ROOM_USERS;
+import static com.wyc.bgswitch.config.lock.RedisLockPrefix.LOCK_PREFIX_USER_ROOMS;
+
+import com.wyc.bgswitch.lock.LockManager;
+import com.wyc.bgswitch.redis.zset.RoomGamesZSetManager;
+import com.wyc.bgswitch.redis.zset.RoomUsersZSetManager;
+import com.wyc.bgswitch.redis.zset.UserRoomsZSetManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author wyc
@@ -16,19 +20,30 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class RoomService {
-
+    private final LockManager lockManager;
     private final RoomMessageService roomMessageService;
-    private final ConcurrentHashMap<String, HashSet<String>> userRoomsMap;
-    private final ConcurrentHashMap<String, RoomInfo> roomsMap; // List方便排序
-    private final ConcurrentHashMap<String, String> roomGameMap; // List方便排序
+    private final RedisLockRegistry redisLockRegistry;
+    private final RoomUsersZSetManager roomUsersZSetManager;
+    private final UserRoomsZSetManager userRoomsZSetManager;
+    private final RoomGamesZSetManager roomGamesZSetManager;
 
     @Autowired
-    RoomService(RoomMessageService roomMessageService) {
+    RoomService(
+            LockManager lockManager,
+            RoomMessageService roomMessageService,
+            RedisLockRegistry redisLockRegistry,
+            RoomUsersZSetManager roomUsersZSetManager,
+            UserRoomsZSetManager userRoomsZSetManager,
+            RoomGamesZSetManager roomGamesZSetManager
+    ) {
+        this.lockManager = lockManager;
         this.roomMessageService = roomMessageService;
-        userRoomsMap = new ConcurrentHashMap<>();
-        roomsMap = new ConcurrentHashMap<>();
-        roomGameMap = new ConcurrentHashMap<>();
+        this.redisLockRegistry = redisLockRegistry;
+        this.roomUsersZSetManager = roomUsersZSetManager;
+        this.userRoomsZSetManager = userRoomsZSetManager;
+        this.roomGamesZSetManager = roomGamesZSetManager;
     }
+
 
 //    /**
 //     * 删除房间：
@@ -53,73 +68,46 @@ public class RoomService {
      * @param userId
      * @param roomId
      */
-    synchronized public void userEnterRoom(String userId, String roomId) {
-        userRoomsMap.computeIfAbsent(userId, k -> new HashSet<>()).add(roomId);
-        roomsMap.computeIfAbsent(roomId, k -> {
-            RoomInfo roomInfo = new RoomInfo(roomId, null, new LinkedList<>());
-            roomInfo.getUsers().add(userId);
-            return roomInfo;
-        });
-        if (!roomsMap.get(roomId).getUsers().contains(userId)) {
-            // 不可以重复添加用户
-            roomsMap.get(roomId).getUsers().add(userId);
+    public void userEnterRoom(String userId, String roomId) {
+        LockManager.MultiLockBuilder.MultiLock lock = lockManager.useBuilder()
+                .obtain(LOCK_PREFIX_USER_ROOMS).of(userId)
+                .obtain(LOCK_PREFIX_ROOM_USERS).of(roomId)
+                .build();
+        lock.lock();
+        try {
+            userRoomsZSetManager.add(userId, roomId);
+            roomUsersZSetManager.add(roomId, userId);
+        } finally {
+            lock.unLock();
         }
-        roomMessageService.notifyRoomChanged(roomsMap.get(roomId));
     }
 
-    //    /**
-//     * 离开房间
-//     * 1. 从用户的房间集合中移除
-//     * 2. 从房间的用户列表中移除
-//     *
-//     * @param userId
-//     * @param roomId
-//     */
-//    synchronized public void userLeaveRoom(String userId, String roomId) {
-//        Optional.ofNullable(userRoomsMap.get(userId)).ifPresent(roomSet -> roomSet.remove(roomId));
-//        Optional.ofNullable(roomUsersMap.get(roomId)).ifPresent(userList -> userList.remove(userId));
-//    }
-//    public List<String> getRooms() {
-//        // 防止修改
-//        return roomUsersMap.keySet().stream().toList();
-//    }
-//
-//    public List<String> getUsers() {
-//        // 防止修改
-//        return userRoomsMap.keySet().stream().toList();
-//    }
-    public LinkedList<String> getRoomUsers(String roomId) {
-        // 防止修改
-        return roomsMap.get(roomId).getUsers();
+    public List<String> getRoomUsers(String roomId) {
+        return roomUsersZSetManager.getAll(roomId);
     }
 
     public List<String> getUserRooms(String userId) {
-        // 防止修改
-        return userRoomsMap.get(userId).stream().toList();
+        return userRoomsZSetManager.getAll(userId);
     }
 
     public Boolean isUserInRoom(String userId, String roomId) {
-        try {
-            return userRoomsMap.get(userId).contains(roomId);
-        } catch (Exception e) {
-            return false;
-        }
+        return roomUsersZSetManager.in(roomId, userId);
     }
 
     public Boolean isRoomOwner(String userId, String roomId) {
-        try {
-            return roomsMap.get(roomId).getUsers().getFirst().equals(userId);
-        } catch (Exception e) {
-            return false;
-        }
+        return userId.equals(roomUsersZSetManager.getFirst(roomId));
     }
 
-    public String getRoomGame(String roomId) {
-        return roomGameMap.get(roomId);
+    public String getCurrentGame(String roomId) {
+        return roomUsersZSetManager.getLast(roomId);
     }
 
-    public void setRoomGame(String roomId, String gameId) {
-        roomGameMap.put(roomId, gameId);
+    public void attachGameToRoom(String roomId, String gameId) {
+        roomUsersZSetManager.add(roomId, gameId);
+    }
+
+    public List<String> getGames(String roomId) {
+        return roomGamesZSetManager.getAll(roomId);
     }
 
 }
