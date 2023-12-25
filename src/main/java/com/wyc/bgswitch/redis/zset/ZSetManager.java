@@ -1,5 +1,7 @@
 package com.wyc.bgswitch.redis.zset;
 
+import com.wyc.bgswitch.redis.constant.ZSetPrefix;
+
 import org.springframework.data.redis.core.ZSetOperations;
 
 import java.util.Collections;

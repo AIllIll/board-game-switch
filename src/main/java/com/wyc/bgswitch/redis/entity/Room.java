@@ -14,6 +14,7 @@ import lombok.NonNull;
 /**
  * @author wyc
  */
+@Deprecated
 @RedisHash("bgs/repo/room")
 @Data
 public class Room {

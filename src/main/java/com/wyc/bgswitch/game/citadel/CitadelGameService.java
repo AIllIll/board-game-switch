@@ -1,47 +1,76 @@
 package com.wyc.bgswitch.game.citadel;
 
+import com.wyc.bgswitch.config.lock.RedisLockPrefix;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
-import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
-import com.wyc.bgswitch.redis.entity.Room;
+import com.wyc.bgswitch.lock.LockManager;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 import com.wyc.bgswitch.redis.repository.CitadelGameRepository;
-import com.wyc.bgswitch.redis.repository.RoomRepository;
+import com.wyc.bgswitch.redis.zset.RoomGamesZSetManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
-import java.util.Collections;
+import java.util.List;
 
 /**
  * @author wyc
  */
 @Service
 public class CitadelGameService {
-
     private final CitadelGameRepository gameRepo;
-    private final RoomRepository roomRepo;
+    private final RoomGamesZSetManager roomGamesZSetManager;
+    private final LockManager lockManager;
 
     @Autowired
-    public CitadelGameService(CitadelGameRepository gameRepo, RoomRepository roomRepo) {
+    public CitadelGameService(CitadelGameRepository gameRepo, RoomGamesZSetManager roomGamesZSetManager, LockManager lockManager) {
         this.gameRepo = gameRepo;
-        this.roomRepo = roomRepo;
+        this.roomGamesZSetManager = roomGamesZSetManager;
+        this.lockManager = lockManager;
     }
 
-    public String create(String roomId, CitadelGameConfig config) {
-        Room room = roomRepo.findById(roomId).orElse(null);
-        Assert.notNull(room, String.format("Room[%s] not found.", roomId));
-        CitadelPlayer host = new CitadelPlayer(room.getUsers().get(0), 0);
-        CitadelGame game = gameRepo.save(new CitadelGame(roomId, config, Collections.singletonList(host)));
-        return game.getId();
+    /**
+     * create citadel game
+     *
+     * @param roomId
+     * @param config
+     * @return gameId
+     */
+    public String create(String roomId, CitadelGameConfig config, String hostId) {
+        CitadelGame game = gameRepo.save(new CitadelGame(roomId, config, hostId));
+        return game.getIdWithGamePrefix();
     }
 
+    /**
+     * find game by id
+     *
+     * @param gameId
+     * @return
+     */
     public CitadelGame get(String gameId) {
+        if (gameId.contains(":")) {
+            gameId = gameId.replace("citadel:", "");
+        }
         return gameRepo.findById(gameId).orElse(null);
     }
 
+    /**
+     * update game atomically
+     *
+     * @param game
+     */
+
     public void update(CitadelGame game) {
-        gameRepo.save(game);
+        LockManager.MultiLockBuilder.MultiLock lock = lockManager.useBuilder().obtain(RedisLockPrefix.LOCK_PREFIX_GAME).of(game.getId()).build();
+        lock.lock();
+        try {
+            gameRepo.save(game);
+        } finally {
+            lock.unLock();
+        }
+    }
+
+    public List<CitadelGame> getRoomGames(String roomId) {
+        return gameRepo.findByRoomId(roomId);
     }
 
     public void findByIds(Iterable<String> ids) {
@@ -53,6 +82,6 @@ public class CitadelGameService {
     }
 
     public void removeAll() {
-        gameRepo.deleteAll();
+//        gameRepo.deleteAll();
     }
 }
