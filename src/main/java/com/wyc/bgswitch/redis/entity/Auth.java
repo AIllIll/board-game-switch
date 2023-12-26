@@ -31,6 +31,7 @@ public class Auth {
     public enum ROLES {
         USER("USER"),
         ADMIN("ADMIN");
+        public static final String PREFIX = "ROLE_";
         public final String name;
 
         ROLES(String name) {
