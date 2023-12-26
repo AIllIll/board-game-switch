@@ -99,11 +99,11 @@ public class RoomService {
     }
 
     public String getCurrentGame(String roomId) {
-        return roomUsersZSetManager.getLast(roomId);
+        return roomGamesZSetManager.getLast(roomId);
     }
 
     public void attachGameToRoom(String roomId, String gameId) {
-        roomUsersZSetManager.add(roomId, gameId);
+        roomGamesZSetManager.add(roomId, gameId);
     }
 
     public List<String> getGames(String roomId) {
