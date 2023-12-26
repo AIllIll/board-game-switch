@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
     }
 
     public void register(String username, String password) throws HttpClientErrorException.Conflict {
-        if (username.trim().length() < 8) {
+        if (username.trim().length() < 8 || username.trim().length() > 12) {
             throw new InvalidCredentialException("Invalid username %s.".formatted(username));
         }
         // todo: validate username: nums and letters only
