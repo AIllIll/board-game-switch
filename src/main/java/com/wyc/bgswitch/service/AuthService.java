@@ -110,7 +110,7 @@ public class AuthService implements UserDetailsService {
         private record Authority(Auth.ROLES role) implements GrantedAuthority {
             @Override
             public String getAuthority() {
-                return role.name();
+                return Auth.ROLES.PREFIX + role.name();
             }
         }
     }

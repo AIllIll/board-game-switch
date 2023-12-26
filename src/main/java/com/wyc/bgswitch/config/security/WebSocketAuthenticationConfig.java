@@ -23,6 +23,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import java.util.List;
 
 
+/**
+ * @author wyc
+ */
 @Configuration
 @Order(HIGHEST_PRECEDENCE + 99)
 public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConfigurer {
