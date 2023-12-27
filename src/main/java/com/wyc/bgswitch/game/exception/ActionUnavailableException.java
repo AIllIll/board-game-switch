@@ -7,6 +7,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author wyc
  */
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Unavailable game action.")  // 400
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)  // 400
 public class ActionUnavailableException extends RuntimeException {
+    public ActionUnavailableException() {
+        super("Unavailable game action.");
+    }
+
+    public ActionUnavailableException(String message) {
+        super(message);
+    }
 }

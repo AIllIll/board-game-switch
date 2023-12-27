@@ -22,7 +22,11 @@ public class CitadelGameService {
     private final LockManager lockManager;
 
     @Autowired
-    public CitadelGameService(CitadelGameRepository gameRepo, RoomGamesZSetManager roomGamesZSetManager, LockManager lockManager) {
+    public CitadelGameService(
+            CitadelGameRepository gameRepo,
+            RoomGamesZSetManager roomGamesZSetManager,
+            LockManager lockManager
+    ) {
         this.gameRepo = gameRepo;
         this.roomGamesZSetManager = roomGamesZSetManager;
         this.lockManager = lockManager;
@@ -47,22 +51,24 @@ public class CitadelGameService {
      * @return
      */
     public CitadelGame get(String gameId) {
-        if (gameId.contains(":")) {
-            gameId = gameId.replace("citadel:", "");
+        if (gameId == null) {
+            return null;
         }
-        return gameRepo.findById(gameId).orElse(null);
+        return gameRepo.findById(CitadelGame.getPureId(gameId)).orElse(null);
     }
 
     /**
      * update game atomically
      *
+     * @param gameId
      * @param game
      */
 
-    public void update(CitadelGame game) {
+    public void update(String gameId, CitadelGame game) {
         LockManager.MultiLockBuilder.MultiLock lock = lockManager.useBuilder().obtain(RedisLockPrefix.LOCK_PREFIX_GAME).of(game.getId()).build();
         lock.lock();
         try {
+            game.setId(gameId);
             gameRepo.save(game);
         } finally {
             lock.unLock();

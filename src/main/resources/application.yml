@@ -25,6 +25,8 @@ prefix:
     channels:
       chat: "/private/chat"
       room: "/private/room"
+      game:
+        citadel: "/private/game/citadel"
 
   resources:
     static: "/static"

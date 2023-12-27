@@ -14,14 +14,14 @@ import java.util.List;
 /**
  * @author wyc
  */
-@Handler(CitadelGameActionType.SIT)
-public class SitActionHandler implements ActionHandler {
+@Handler(CitadelGameActionType.KICK)
+public class KickActionHandler implements ActionHandler {
     @Override
     public void check(CitadelGame game, CitadelGameAction action, String userId) {
         Integer seatIdx = JSON.parseObject(action.getBody(), Integer.class);
+        ActionAssertUtil.assertIsHost(game, userId);
         ActionAssertUtil.assertStatusPrepare(game);
-        ActionAssertUtil.assertSeatAvailable(game, seatIdx);
-        ActionAssertUtil.assertPlayerNotFull(game);
+        ActionAssertUtil.assertSeatTaken(game, seatIdx);
     }
 
     @Override
@@ -29,15 +29,9 @@ public class SitActionHandler implements ActionHandler {
         Integer seatIdx = JSON.parseObject(action.getBody(), Integer.class);
 
         List<CitadelPlayer> playerList = new ArrayList<>(game.getPlayers());
-        int formerIdx = playerList.stream().map(CitadelPlayer::getUserId).toList().indexOf(userId);
-        if (formerIdx >= 0) {
-            // 对应换座的情况
-            playerList.set(formerIdx, CitadelPlayer.emptyPlayer());
-        }
-        playerList.set(seatIdx, new CitadelPlayer(userId));
+        playerList.set(seatIdx, CitadelPlayer.emptyPlayer());
         game.setPlayers(playerList);
-
+        
         return game;
     }
-
 }

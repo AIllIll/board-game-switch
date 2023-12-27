@@ -1,7 +1,7 @@
 package com.wyc.bgswitch.controller.web;
 
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
-import com.wyc.bgswitch.entity.RoomInfo;
+import com.wyc.bgswitch.entity.RoomInfoVO;
 import com.wyc.bgswitch.entity.UserInfo;
 import com.wyc.bgswitch.service.RoomService;
 import com.wyc.bgswitch.utils.debug.Debug;
@@ -27,21 +27,20 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @Deprecated
-    @GetMapping("/{roomId}")
     @Debug
-    public RoomInfo getRoomInfo(@PathVariable String roomId) {
-        return new RoomInfo(
+    @GetMapping("/{roomId}")
+    public RoomInfoVO getRoomInfo(@PathVariable String roomId) {
+        return new RoomInfoVO(
                 roomId,
-                roomService.getCurrentGame(roomId),
-                roomService.getRoomUsers(roomId)
+                roomService.getRoomUserIds(roomId),
+                roomService.getLastGameId(roomId)
         );
     }
 
     @Deprecated
     @GetMapping("/{roomId}/users")
     public List<UserInfo> getRoomUsers(@PathVariable String roomId) {
-        return roomService.getRoomUsers(roomId).stream().map(
+        return roomService.getRoomUserIds(roomId).stream().map(
                 userId -> new UserInfo(userId, userId, null)
         ).collect(Collectors.toList());
     }
@@ -49,6 +48,6 @@ public class RoomController {
     @Deprecated
     @GetMapping("/{roomId}/game")
     public String getRoomGame(@PathVariable String roomId) {
-        return roomService.getCurrentGame(roomId);
+        return roomService.getLastGameId(roomId);
     }
 }

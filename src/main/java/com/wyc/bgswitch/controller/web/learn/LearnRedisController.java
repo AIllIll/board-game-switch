@@ -89,7 +89,7 @@ public class LearnRedisController {
     public String redisRepositorySaveRoom(@RequestBody RedisRepositorySaveRequestBody body) {
 //        CitadelGame game = gameRepo.save(new CitadelGame("test", Collections.singletonList(new CitadelPlayer(null, 456)), new CitadelGameConfig()));
         Room room = new Room(body.roomId(), new LinkedList<>(Collections.singletonList("8a41f3f0-ae55-4a18-8738-daaa8c0639a4")));
-        CitadelGame g = new CitadelGame(body.roomId(), CitadelGameConfig.defaultConfig, "", Collections.singletonList(new CitadelPlayer(null)));
+        CitadelGame g = new CitadelGame(body.roomId(), CitadelGameConfig.getDefaultConfig(), "", Collections.singletonList(new CitadelPlayer(null)));
         gameRepo.save(g);
         room.setGame(g);
         room = roomRepo.save(room);
@@ -256,7 +256,7 @@ public class LearnRedisController {
     public Room serializer2(@RequestParam String roomId) {
         // repo保存
         Room room = new Room(roomId, new LinkedList<>(Collections.singletonList("8a41f3f0-ae55-4a18-8738-daaa8c0639a4")));
-        CitadelGame g = new CitadelGame(roomId, CitadelGameConfig.defaultConfig, "0", Collections.singletonList(new CitadelPlayer(null)));
+        CitadelGame g = new CitadelGame(roomId, CitadelGameConfig.getDefaultConfig(), "0", Collections.singletonList(new CitadelPlayer(null)));
         gameRepo.save(g);
         room.setGame(g);
         room = roomRepo.save(room);

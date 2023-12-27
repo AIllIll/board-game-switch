@@ -4,8 +4,6 @@ import com.wyc.bgswitch.game.annotation.Handler;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.exception.ActionHandlerNotFoundException;
-import com.wyc.bgswitch.game.exception.ActionUnavailableException;
-import com.wyc.bgswitch.redis.entity.User;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +37,12 @@ public class CitadelGameActionHandlerManager {
         throw new ActionHandlerNotFoundException();
     }
 
-    public CitadelGame handleAction(CitadelGame game, CitadelGameAction action, User user) {
+    public CitadelGame handleAction(CitadelGame game, CitadelGameAction action, String userId) {
         // 获取handler
         ActionHandler handler = getHandler(action.getType());
         // 检查
-        if (!handler.check(game, action, user)) {
-            throw new ActionUnavailableException();
-        }
+        handler.check(game, action, userId);
         // 执行
-        return handler.handle(game, action, user);
+        return handler.handle(game, action, userId);
     }
 }

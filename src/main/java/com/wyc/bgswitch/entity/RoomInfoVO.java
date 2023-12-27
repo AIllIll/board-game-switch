@@ -10,8 +10,8 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class RoomInfo {
+public class RoomInfoVO {
     private String id;
+    private List<String> userIds;
     private String gameId;
-    private List<String> users;
 }
