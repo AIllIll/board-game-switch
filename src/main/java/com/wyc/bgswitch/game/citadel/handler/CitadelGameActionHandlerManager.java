@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -43,6 +44,14 @@ public class CitadelGameActionHandlerManager {
         // 检查
         handler.check(game, action, userId);
         // 执行
-        return handler.handle(game, action, userId);
+        CitadelGame newGame = handler.handle(game, action, userId);
+
+        // 保存action
+        if (newGame.getActions() == null) {
+            newGame.setActions(new ArrayList<>());
+        }
+        newGame.getActions().add(action);
+
+        return newGame;
     }
 }

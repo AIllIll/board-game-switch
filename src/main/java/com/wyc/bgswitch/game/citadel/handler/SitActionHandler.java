@@ -8,7 +8,6 @@ import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,15 +26,13 @@ public class SitActionHandler implements ActionHandler {
     @Override
     public CitadelGame handle(CitadelGame game, CitadelGameAction action, String userId) {
         Integer seatIdx = JSON.parseObject(action.getBody(), Integer.class);
-
-        List<CitadelPlayer> playerList = new ArrayList<>(game.getPlayers());
+        List<CitadelPlayer> playerList = game.getPlayers();
         int formerIdx = playerList.stream().map(CitadelPlayer::getUserId).toList().indexOf(userId);
         if (formerIdx >= 0) {
             // 对应换座的情况
             playerList.set(formerIdx, CitadelPlayer.emptyPlayer());
         }
         playerList.set(seatIdx, new CitadelPlayer(userId));
-        game.setPlayers(playerList);
 
         return game;
     }
