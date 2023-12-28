@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.game.citadel.check;
+package com.wyc.bgswitch.game.citadel.util;
 
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.constant.GameStatus;
@@ -67,7 +67,7 @@ public class ActionAssertUtil {
 
 
     /**
-     * 玩家满了
+     * 玩家没满
      *
      * @param game
      * @return
@@ -76,6 +76,20 @@ public class ActionAssertUtil {
         int seats = game.getPlayers().stream().filter(p -> p.getUserId() == null).toList().size();
         if (seats == 0) {
             throw new ActionUnavailableException("No available seats.");
+        }
+    }
+
+
+    /**
+     * 玩家满了
+     *
+     * @param game
+     * @return
+     */
+    public static void assertPlayerFull(CitadelGame game) {
+        int seats = game.getPlayers().stream().filter(p -> p.getUserId() == null).toList().size();
+        if (seats != 0) {
+            throw new ActionUnavailableException("Need more players.");
         }
     }
 }

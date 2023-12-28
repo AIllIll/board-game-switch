@@ -10,6 +10,7 @@ import com.wyc.bgswitch.redis.zset.RoomGamesZSetManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,7 +41,9 @@ public class CitadelGameService {
      * @return gameId
      */
     public String create(String roomId, CitadelGameConfig config, String hostId) {
-        CitadelGame game = gameRepo.save(new CitadelGame(roomId, config, hostId));
+        CitadelGame draft = new CitadelGame(roomId, config, hostId);
+        draft.setCreatedAt(new Date().getTime());
+        CitadelGame game = gameRepo.save(draft);
         return game.getIdWithGamePrefix();
     }
 

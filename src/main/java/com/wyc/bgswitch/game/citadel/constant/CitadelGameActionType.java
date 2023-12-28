@@ -8,6 +8,7 @@ public enum CitadelGameActionType {
     SIT("SIT"), // 坐下，加入游戏
     KICK("KICK"), // 踢人
     STAND("STAND"), // 旁观
+    START("START"), // 开始游戏
     LEAVE("LEAVE"), // 离开游戏
     PICK_CHARACTER("PICK_CHARACTER"), // 选身份
     COLLECT("COLLECT"), // 获取资源
