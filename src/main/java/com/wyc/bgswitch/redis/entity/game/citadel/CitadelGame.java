@@ -42,7 +42,7 @@ public class CitadelGame {
     private Integer crown; // 皇冠：玩家序号
     private Integer heir; // 继承人：玩家序号
     private Integer round; // 回合数
-    private Integer pickingTurn; // 当前选人玩家序号
+    private Integer pickingTurn; // 当前选人玩家序号, 如果超过玩家数量2倍，则说明进入角色环节
     private List<CitadelGameCharacter.CardStatus> characterCardStatus; // 角色卡状态
     private List<CitadelGameCharacter.InGameStatus> characterStatus; // 角色状态
     private Integer firstFinishedPlayer; // 第一个完成建筑的玩家
@@ -75,10 +75,14 @@ public class CitadelGame {
     }
 
     public void clearCharacterCardStatus() {
-        this.setCharacterCardStatus(Collections.nCopies(8, CitadelGameCharacter.CardStatus.AVAILABLE));
+        this.setCharacterCardStatus(new ArrayList<>(Collections.nCopies(8, CitadelGameCharacter.CardStatus.AVAILABLE)));
     }
 
     public void clearCharacterStatus() {
-        this.setCharacterStatus(Collections.nCopies(8, new CitadelGameCharacter.InGameStatus()));
+        this.setCharacterStatus(new ArrayList<>(Collections.nCopies(8, new CitadelGameCharacter.InGameStatus())));
+    }
+
+    public Long getRandomSeed() {
+        return this.getCreatedAt();
     }
 }

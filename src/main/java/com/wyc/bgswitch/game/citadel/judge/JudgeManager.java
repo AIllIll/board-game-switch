@@ -24,6 +24,10 @@ public class JudgeManager {
         getJudge(game).beforeRound(game);
     }
 
+    public static void afterPickingTurn(CitadelGame game) {
+        getJudge(game).afterPickingTurn(game);
+    }
+
     public static void afterRound(CitadelGame game) {
         getJudge(game).afterRound(game);
     }

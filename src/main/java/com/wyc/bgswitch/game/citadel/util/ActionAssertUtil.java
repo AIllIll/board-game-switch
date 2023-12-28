@@ -1,5 +1,6 @@
 package com.wyc.bgswitch.game.citadel.util;
 
+import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.constant.GameStatus;
 import com.wyc.bgswitch.game.exception.ActionUnavailableException;
@@ -117,6 +118,12 @@ public class ActionAssertUtil {
         int currentPlayerIdx = (game.getCrown() + game.getPickingTurn()) % game.getPlayers().size();
         if (!game.getPlayers().get(currentPlayerIdx).getUserId().equals(userId)) {
             throw new ActionUnavailableException("It's not your turn to pick character.");
+        }
+    }
+
+    public static void assertCharacterAvailable(CitadelGame game, Integer characterIdx) {
+        if (!game.getCharacterCardStatus().get(characterIdx).equals(CitadelGameCharacter.CardStatus.AVAILABLE)) {
+            throw new ActionUnavailableException("The character has been picked.");
         }
     }
 }

@@ -35,7 +35,7 @@ public abstract class Judge {
      */
     public final void beforeGame(CitadelGame game) {
         // use createdAt as random seed
-        Random random = new Random(game.getCreatedAt());
+        Random random = new Random(game.getRandomSeed());
         // 1.card deck
         List<Integer> cards = DistrictCard.getAll();
         Collections.shuffle(cards, random);
@@ -59,11 +59,11 @@ public abstract class Judge {
         game.setRound(0);
         // 6.firstFinishedPlayer
         game.setFirstFinishedPlayer(-1);
-        // 7.
+        // 7. initialize pickingTurn
         game.setPickingTurn(-1);
-        // 8.
+        // 8. initialize characterCardStatus
         game.clearCharacterStatus();
-        // 9.
+        // 9. initialize characterStatus
         game.clearCharacterCardStatus();
     }
 
@@ -97,15 +97,18 @@ public abstract class Judge {
         game.clearCharacterStatus();
     }
 
-
     /**
      * 1. increase pickingTurn
+     * 2. start character turn after last player pick his last character
      *
      * @param game
      */
     @OverridingMethodsMustInvokeSuper
-    public void afterTurn(CitadelGame game) {
+    public void afterPickingTurn(CitadelGame game) {
+        // 1. increase pickingTurn
         game.setPickingTurn(game.getPickingTurn() + 1);
+        // 2. start character turn after last player pick his last character
+
     }
 
     /**
