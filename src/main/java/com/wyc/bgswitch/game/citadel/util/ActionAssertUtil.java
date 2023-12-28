@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ActionAssertUtil {
     /**
-     * 准备阶段可以改
+     * 准备阶段
      *
      * @param game
      * @return
@@ -22,6 +22,19 @@ public class ActionAssertUtil {
             throw new ActionUnavailableException("The game has started");
         }
     }
+
+    /**
+     * 进行阶段
+     *
+     * @param game
+     * @return
+     */
+    public static void assertStatusOngoing(CitadelGame game) {
+        if (!GameStatus.ONGOING.equals(game.getStatus())) {
+            throw new ActionUnavailableException("The game is not ongoing.");
+        }
+    }
+
 
     /**
      * 玩家是否房主
@@ -90,6 +103,20 @@ public class ActionAssertUtil {
         int seats = game.getPlayers().stream().filter(p -> p.getUserId() == null).toList().size();
         if (seats != 0) {
             throw new ActionUnavailableException("Need more players.");
+        }
+    }
+
+
+    /**
+     * @param game
+     */
+    public static void assertCorrectTurnToPick(CitadelGame game, String userId) {
+        if (game.getPickingTurn() < 0) {
+            throw new ActionUnavailableException("It's not your turn to pick character.");
+        }
+        int currentPlayerIdx = (game.getCrown() + game.getPickingTurn()) % game.getPlayers().size();
+        if (!game.getPlayers().get(currentPlayerIdx).getUserId().equals(userId)) {
+            throw new ActionUnavailableException("It's not your turn to pick character.");
         }
     }
 }

@@ -1,11 +1,17 @@
 package com.wyc.bgswitch.game.citadel.constant;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import lombok.Getter;
+
 /**
  * @author wyc
  * {@link <a href="https://www.pinterest.ca/pin/271130840054368613/">...</a>)}
  * {@link <a href="https://boardgamegeek.com/filepage/34817/citadels-district-cards-reference">...</a>}
  */
-
+@Getter
 public enum DistrictCard {
     Watchtower("Watchtower", 3, DistrictCardType.Military, 1, ""),
     Prison("Prison", 3, DistrictCardType.Military, 2, ""),
@@ -54,6 +60,19 @@ public enum DistrictCard {
 
     public static DistrictCard getCardByOrdinal(int id) {
         return DistrictCard.values()[id];
+    }
+
+    /**
+     * get all cards
+     *
+     * @return
+     */
+    public static List<Integer> getAll() {
+        List<Integer> cards = new ArrayList<>();
+        for (DistrictCard card : DistrictCard.values()) {
+            cards.addAll(Collections.nCopies(card.getCount(), card.ordinal()));
+        }
+        return cards;
     }
 
     public enum DistrictCardType {

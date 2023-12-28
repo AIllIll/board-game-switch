@@ -2,10 +2,14 @@ package com.wyc.bgswitch.game.citadel.constant;
 
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author wyc
  */
 
+@Getter
 public enum CitadelGameCharacter {
     ASSASSIN("ASSASSIN"),
     THIEF("THIEF"),
@@ -28,5 +32,21 @@ public enum CitadelGameCharacter {
 
     CitadelGameCharacter(String value) {
         this.value = value;
+    }
+
+    public enum CardStatus {
+        AVAILABLE,
+        PICKED,
+        HIDDEN, // in dual game, one character will be preserved fore second player to pick
+        BURIED, // buried
+    }
+
+    @Setter
+    @Getter
+    public static class InGameStatus {
+        private boolean assassinated = false; // killed by assassin
+        private boolean stolen = false; // stolen by thief
+        private boolean[] abilityUsed = {false, false}; // whether abilities have been used
+        private boolean over = false; // the character's turn is over
     }
 }

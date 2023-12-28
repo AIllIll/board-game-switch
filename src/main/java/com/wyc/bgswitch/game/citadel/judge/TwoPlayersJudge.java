@@ -14,7 +14,7 @@ public class TwoPlayersJudge extends Judge {
      */
     @Override
     public void beforeRound(CitadelGame game) {
-
+        super.beforeRound(game);
     }
 
     /**
@@ -26,5 +26,4 @@ public class TwoPlayersJudge extends Judge {
     public void afterTurn(CitadelGame game) {
 
     }
-    
 }

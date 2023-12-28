@@ -1,5 +1,6 @@
 package com.wyc.bgswitch.redis.entity.game.citadel;
 
+import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
@@ -40,7 +41,11 @@ public class CitadelGame {
     private List<Integer> cardDeck; // 牌堆
     private Integer crown; // 皇冠：玩家序号
     private Integer heir; // 继承人：玩家序号
-    private Integer currentCharacter; // 当前角色序号
+    private Integer round; // 回合数
+    private Integer pickingTurn; // 当前选人玩家序号
+    private List<CitadelGameCharacter.CardStatus> characterCardStatus; // 角色卡状态
+    private List<CitadelGameCharacter.InGameStatus> characterStatus; // 角色状态
+    private Integer firstFinishedPlayer; // 第一个完成建筑的玩家
     private Long createdAt;
     private Long startedAt;
     private Long finishedAt;
@@ -69,4 +74,11 @@ public class CitadelGame {
         return "%s%s".formatted(GAME_PREFIX, id);
     }
 
+    public void clearCharacterCardStatus() {
+        this.setCharacterCardStatus(Collections.nCopies(8, CitadelGameCharacter.CardStatus.AVAILABLE));
+    }
+
+    public void clearCharacterStatus() {
+        this.setCharacterStatus(Collections.nCopies(8, new CitadelGameCharacter.InGameStatus()));
+    }
 }

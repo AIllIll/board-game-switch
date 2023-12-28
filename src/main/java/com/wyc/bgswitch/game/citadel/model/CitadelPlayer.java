@@ -1,7 +1,6 @@
 package com.wyc.bgswitch.game.citadel.model;
 
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
-import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class CitadelPlayer {
     private CitadelGameCharacter character2; // 身份2
     private Integer coins; // 金币
     private List<Integer> hand; // 手牌
-    private Map<DistrictCard.DistrictCardType, List<DistrictCard>> buildings; // 建筑
+    private Map<Integer, List<Integer>> districts; // 建筑
 
     public CitadelPlayer(String userId) {
         this.userId = userId;
