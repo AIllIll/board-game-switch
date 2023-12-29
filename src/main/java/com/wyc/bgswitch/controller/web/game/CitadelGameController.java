@@ -3,6 +3,8 @@ package com.wyc.bgswitch.controller.web.game;
 import com.wyc.bgswitch.config.lock.RedisLockPrefix;
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
 import com.wyc.bgswitch.game.citadel.CitadelGameService;
+import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
+import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 import com.wyc.bgswitch.game.citadel.handler.CitadelGameActionHandlerManager;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 /**
  * @author wyc
@@ -87,6 +91,14 @@ public class CitadelGameController {
         }
     }
 
+    @GetMapping("/constant")
+    public List<String> constant() throws ClassNotFoundException {
+        return List.of(
+                DistrictCard.DistrictCardType.toFrontendConstantObject(),
+                DistrictCard.toFrontendConstantObject(),
+                CitadelGameCharacter.toFrontendConstantObject()
+        );
+    }
 
     public record CreateGameRequestBody(String roomId, Integer playerNumber) {
     }

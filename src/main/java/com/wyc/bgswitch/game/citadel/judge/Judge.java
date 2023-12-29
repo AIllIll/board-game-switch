@@ -30,6 +30,7 @@ public abstract class Judge {
      * 7. initialize pickingTurn
      * 8. initialize characterCardStatus
      * 9. initialize characterStatus
+     * 10. initialize coins
      *
      * @param game game
      */
@@ -59,12 +60,14 @@ public abstract class Judge {
         game.setRound(0);
         // 6.firstFinishedPlayer
         game.setFirstFinishedPlayer(-1);
-        // 7. initialize pickingTurn
+        // 7.initialize pickingTurn
         game.setPickingTurn(-1);
-        // 8. initialize characterCardStatus
+        // 8.initialize characterCardStatus
         game.clearCharacterStatus();
-        // 9. initialize characterStatus
+        // 9.initialize characterStatus
         game.clearCharacterCardStatus();
+        // 10. initialize coins
+        game.getPlayers().forEach(p -> p.setCoins(2));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.game.citadel.constant;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public enum DistrictCard {
     University("University", 1, DistrictCardType.Special, 6, "This district costs 6 gold to build, but is worth 8 points at the end of the game"),
     Library("Library", 1, DistrictCardType.Special, 6, "If you choose to draw cards you you take an action, you keep both of the cards you have drawn."),
     Great_Wall("Great Wall", 1, DistrictCardType.Special, 6, "The cost for the Warlord to destroy any of your other districts is increased by one gold"),
-    School_Of_Magic("School Of Magic", 1, DistrictCardType.Special, 6, "For the purposes of income, the School Of Magic I considered to be the color of your choice.  If you are the King this round, for example, the School is considered to be a noble (yellow) district."),
+    Magic_School("Magic School", 1, DistrictCardType.Special, 6, "For the purposes of income, the School Of Magic I considered to be the color of your choice.  If you are the King this round, for example, the School is considered to be a noble (yellow) district."),
     ;
     private final String name;
     private final Integer count;
@@ -75,6 +76,25 @@ public enum DistrictCard {
         return cards;
     }
 
+    public static String toFrontendConstantObject() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        Arrays.stream(DistrictCard.values()).forEach(
+                (o) -> sb.append("%s:{idx: %s, name: \"%s\", count: %s, cost: %s, type: \"%s\", description: \"%s\" },".formatted(
+                        String.join("_", o.getName().split(" ")),
+                        o.ordinal(),
+                        String.join("_", o.getName().split(" ")),
+                        o.getCount(),
+                        o.getCost(),
+                        o.getType(),
+                        o.getDescription()
+                ))
+        );
+        sb.append("}");
+        return sb.toString();
+    }
+
+    @Getter
     public enum DistrictCardType {
         Noble("Noble", "yellow"),
         Religious("Religious", "blue"),
@@ -87,6 +107,16 @@ public enum DistrictCard {
         DistrictCardType(String name, String color) {
             this.name = name;
             this.color = color;
+        }
+
+        public static String toFrontendConstantObject() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{");
+            Arrays.stream(DistrictCardType.values()).forEach(
+                    o -> sb.append("%s:{name: \"%s\", color:\"%s\"},".formatted(o.getName(), o.getName(), o.getColor()))
+            );
+            sb.append("}");
+            return sb.toString();
         }
     }
 }
