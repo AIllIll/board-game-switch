@@ -8,8 +8,8 @@ import lombok.Getter;
 
 /**
  * @author wyc
- * {@link <a href="https://www.pinterest.ca/pin/271130840054368613/">...</a>)}
- * {@link <a href="https://boardgamegeek.com/filepage/34817/citadels-district-cards-reference">...</a>}
+ * {@link <a href="https://www.pinterest.ca/pin/271130840054368613/">csv file</a>)}
+ * {@link <a href="https://boardgamegeek.com/image/1296141/citadels">images</a>}
  */
 @Getter
 public enum DistrictCard {
