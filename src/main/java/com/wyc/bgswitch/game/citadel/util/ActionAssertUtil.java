@@ -1,6 +1,8 @@
 package com.wyc.bgswitch.game.citadel.util;
 
+import com.alibaba.fastjson.JSON;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
+import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.constant.GameStatus;
 import com.wyc.bgswitch.game.exception.ActionUnavailableException;
@@ -109,21 +111,122 @@ public class ActionAssertUtil {
 
 
     /**
+     * 轮到玩家选角色
+     *
      * @param game
      */
     public static void assertCorrectTurnToPick(CitadelGame game, String userId) {
-        if (game.getPickingTurn() < 0) {
+        if (game.getTurn() < 0) {
             throw new ActionUnavailableException("It's not your turn to pick character.");
         }
-        int currentPlayerIdx = (game.getCrown() + game.getPickingTurn()) % game.getPlayers().size();
+        int currentPlayerIdx = (game.getCrown() + game.getTurn()) % game.getPlayers().size();
         if (!game.getPlayers().get(currentPlayerIdx).getUserId().equals(userId)) {
             throw new ActionUnavailableException("It's not your turn to pick character.");
         }
     }
 
+    /**
+     * 角色可以被选择
+     *
+     * @param game
+     * @param characterIdx
+     */
     public static void assertCharacterAvailable(CitadelGame game, Integer characterIdx) {
         if (!game.getCharacterCardStatus().get(characterIdx).equals(CitadelGameCharacter.CardStatus.AVAILABLE)) {
             throw new ActionUnavailableException("The character has been picked.");
+        }
+    }
+
+    /**
+     * 轮到玩家持有角色行动
+     *
+     * @param game
+     */
+    public static void assertCorrectTurnToMove(CitadelGame game, String userId) {
+        if (game.getTurn() < 2 * game.getPlayers().size()) {
+            throw new ActionUnavailableException("It's not your turn to pick character.");
+        }
+        int currentCharacterIdx = game.getTurn() - 2 * game.getPlayers().size();
+        CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
+        CitadelPlayer player = game.getPlayers().stream().filter(p -> p.getUserId().equals(userId)).findAny()
+                .orElse(CitadelPlayer.emptyPlayer());
+        if (player.getCharacter1() != character && player.getCharacter2() != character) {
+            throw new ActionUnavailableException("It's not your turn to move.");
+        }
+    }
+
+    /**
+     * 玩家尚未获取钱/卡
+     *
+     * @param game
+     */
+    public static void assertPlayerNotCollected(CitadelGame game) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        if (player.getStatus().isCollected()) {
+            throw new ActionUnavailableException("Player has already collected.");
+        }
+    }
+
+    /**
+     * 玩家不在选卡
+     *
+     * @param game
+     */
+    public static void assertPlayerNotCollecting(CitadelGame game) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        if (player.getStatus().isCollecting()) {
+            throw new ActionUnavailableException("Player is collecting.");
+        }
+    }
+
+    /**
+     * 玩家正在选卡
+     *
+     * @param game
+     */
+    public static void assertPlayerCollecting(CitadelGame game) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        if (!player.getStatus().isCollecting()) {
+            throw new ActionUnavailableException("Player is not collecting.");
+        }
+    }
+
+    /**
+     * 玩家尚未获取钱/卡
+     *
+     * @param game
+     */
+    public static void assertPlayerCollected(CitadelGame game) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        if (!player.getStatus().isCollected()) {
+            throw new ActionUnavailableException("Player has not collected yet.");
+        }
+    }
+
+    /**
+     * 用户之前抽了卡
+     *
+     * @param game
+     */
+    public static void assertDrawnCardNotEmpty(CitadelGame game) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        // todo
+        if (player.getDrawnCards() == null || player.getDrawnCards().size() == 0) {
+            throw new ActionUnavailableException("Drawn district cards not found.");
+        }
+    }
+
+    /**
+     * 保留的卡的数量正确
+     *
+     * @param game
+     */
+    public static void assertKeepingCardNumber(CitadelGame game, CitadelGameAction action) {
+        List<Integer> keptCards = JSON.parseArray(action.getBody(), Integer.class);
+        CitadelPlayer player = game.getCurrentPlayer();
+        // todo
+        if (keptCards.size() != 1) {
+            throw new ActionUnavailableException("Keep too many district cards.");
         }
     }
 }

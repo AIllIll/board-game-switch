@@ -34,7 +34,7 @@ public class PickCharacterActionHandler implements ActionHandler {
     public CitadelGame handle(CitadelGame game, CitadelGameAction action, String userId) {
         Integer characterIdx = JSON.parseObject(action.getBody(), Integer.class);
         CitadelGameCharacter character = CitadelGameCharacter.values()[characterIdx];
-        int turn = game.getPickingTurn();
+        int turn = game.getTurn();
         int playerNumber = game.getPlayers().size();
         // start counting from crown
         int currentPlayerIdx = (game.getCrown() + turn) % playerNumber;

@@ -69,6 +69,7 @@ public class CitadelGameController {
 
     @Debug
     @GetMapping("/{gameId}")
+//    @JsonView(CitadelGame.FrontendView.class)
     public CitadelGame getGame(@PathVariable String gameId) {
         return gameService.get(gameId);
     }

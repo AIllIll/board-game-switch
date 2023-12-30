@@ -1,5 +1,6 @@
 package com.wyc.bgswitch.redis.entity.game.citadel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
@@ -25,7 +26,9 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor(force = true)
 public class CitadelGame {
+
     public static final String GAME_PREFIX = "citadel/";
+
     @Id
     private String id;
     @Indexed
@@ -37,12 +40,24 @@ public class CitadelGame {
     private String hostId; // 房主
     private List<CitadelPlayer> players; // 玩家列表
     private List<CitadelGameAction> actions; // 玩家行为记录
-    private GameStatus status; // 游戏状态
+    private GameStatus status = GameStatus.PREPARE; // 游戏状态
     private List<Integer> cardDeck; // 牌堆
-    private Integer crown; // 皇冠：玩家序号
-    private Integer heir; // 继承人：玩家序号
-    private Integer round; // 回合数
-    private Integer pickingTurn; // 当前选人玩家序号, 如果超过玩家数量2倍，则说明进入角色环节
+    private Integer crown = 0; // 皇冠：玩家序号
+    private Integer heir = 0; // 继承人：玩家序号
+    private Integer round = 0; // 回合数
+    /**
+     * turn 轮次序号
+     * <p>
+     * 选角色： [0, 2 * players.size)
+     * 角色行动： [2 * players.size, 2 * players.size + 8), 如果角色不存在就直接跳轮
+     */
+    private Integer turn = 0; // 轮次序号
+    /**
+     * turn 轮次序号
+     * <p>
+     * 选角色： [0, 2 * players.size)
+     * 角色行动： [2 * players.size, 2 * players.size + 8), 如果角色不存在就直接跳轮
+     */
     private List<CitadelGameCharacter.CardStatus> characterCardStatus; // 角色卡状态
     private List<CitadelGameCharacter.InGameStatus> characterStatus; // 角色状态
     private Integer firstFinishedPlayer; // 第一个完成建筑的玩家
@@ -53,17 +68,16 @@ public class CitadelGame {
     public CitadelGame(@NonNull String roomId, @NonNull CitadelGameConfig config, @NonNull String hostId) {
         this.roomId = roomId;
         this.config = config;
-        this.status = GameStatus.PREPARE;
-        this.players = new ArrayList<>(Collections.nCopies(config.getPlayerNumber(), CitadelPlayer.emptyPlayer())); // 创建空座位
         this.hostId = hostId;
+        this.players = new ArrayList<>(Collections.nCopies(config.getPlayerNumber(), CitadelPlayer.emptyPlayer())); // 创建空座位
     }
 
+    @Deprecated
     public CitadelGame(@NonNull String roomId, @NonNull CitadelGameConfig config, @NonNull String hostId, List<CitadelPlayer> players) {
         this.roomId = roomId;
         this.config = config;
         this.hostId = hostId;
         this.players = players;
-        this.status = GameStatus.PREPARE;
     }
 
     public static String getPureId(String id) {
@@ -84,5 +98,41 @@ public class CitadelGame {
 
     public Long getRandomSeed() {
         return this.getCreatedAt();
+    }
+
+    @JsonIgnore
+    public CitadelPlayer getCurrentPlayer() {
+        int turn = this.getTurn();
+        int numOfPlayers = this.getPlayers().size();
+        if (turn < 2 * numOfPlayers) {
+            return this.getPlayers().get((this.getCrown() + turn) % numOfPlayers);
+        } else {
+            int currentCharacterIdx = turn - 2 * numOfPlayers;
+            CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
+            CitadelPlayer player = this.getPlayers().stream().filter(
+                    p -> p.getCharacter1().equals(character) || p.getCharacter2().equals(character)
+            ).findAny().orElse(null);
+            return player;
+        }
+    }
+
+    public String getCurrentPlayerId() {
+        CitadelPlayer player = getCurrentPlayer();
+        return player == null ? null : player.getUserId();
+    }
+
+
+    @JsonIgnore
+    public Boolean isInPickingTurn() {
+        int turn = this.getTurn();
+        int numOfPlayers = this.getPlayers().size();
+        return turn < 2 * numOfPlayers;
+    }
+
+    @JsonIgnore
+    public Boolean isInCharacterTurn() {
+        int turn = this.getTurn();
+        int numOfPlayers = this.getPlayers().size();
+        return turn >= 2 * numOfPlayers;
     }
 }

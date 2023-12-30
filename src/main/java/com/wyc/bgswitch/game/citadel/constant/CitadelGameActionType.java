@@ -11,7 +11,9 @@ public enum CitadelGameActionType {
     START("START"), // 开始游戏
     LEAVE("LEAVE"), // 离开游戏
     PICK_CHARACTER("PICK_CHARACTER"), // 选身份
-    COLLECT("COLLECT"), // 获取资源
+    COLLECT_COINS("COLLECT_COINS"), // 获取硬币
+    DRAW_CARDS("DRAW_CARDS"), // 获取地区卡
+    RETURN_CARDS("RETURN_CARDS"), // 归还地区卡
     BUILD("BUILD"), // 建造
     USE_BUILDING("USE_BUILDING"), // 使用建筑
     USE_ABILITY("USE_ABILITY"), // 使用技能

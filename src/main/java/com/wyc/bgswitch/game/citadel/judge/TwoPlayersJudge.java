@@ -48,7 +48,7 @@ public class TwoPlayersJudge extends Judge {
         statusList.set(removeIdx, CitadelGameCharacter.CardStatus.BURIED);
         // 2. show the hidden character
         int lastPickingTurn = 2 * game.getPlayers().size() - 1;
-        if (game.getPickingTurn() == lastPickingTurn - 1) {
+        if (game.getTurn() == lastPickingTurn - 1) {
             // the next player is lastPickingTurn, which is the last player
             // this is actually doBeforePickingTurn
             for (int i = 0; i < statusList.size(); i++) {
