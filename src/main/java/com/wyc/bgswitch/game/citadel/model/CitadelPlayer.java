@@ -2,6 +2,7 @@ package com.wyc.bgswitch.game.citadel.model;
 
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +18,7 @@ public class CitadelPlayer {
     private String userId;
     private Integer score = 0; // 总得分
     private Integer visibleScore = 0; // 可见得分
-    private CitadelGameCharacter character1; // 身份1
-    private CitadelGameCharacter character2; // 身份2
+    private List<CitadelGameCharacter> characters = new ArrayList<>(); // 身份
     private Integer coins = 0; // 金币
     private List<Integer> hand; // 手牌
     private List<Integer> drawnCards; // 抽的牌

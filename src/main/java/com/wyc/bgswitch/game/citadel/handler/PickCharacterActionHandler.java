@@ -10,6 +10,8 @@ import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.citadel.util.ActionAssertUtil;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 
+import java.util.ArrayList;
+
 /**
  * @author wyc
  */
@@ -41,11 +43,10 @@ public class PickCharacterActionHandler implements ActionHandler {
         CitadelPlayer player = game.getPlayers().get(currentPlayerIdx);
         if (turn < playerNumber) {
             // first turn
-            player.setCharacter1(character);
-        } else {
-            // second turn
-            player.setCharacter2(character);
+            player.setCharacters(new ArrayList<>());
         }
+        player.getCharacters().add(character); // add
+        player.getCharacters().sort(CitadelGameCharacter::compareTo); // sort
         game.getCharacterCardStatus().set(characterIdx, CitadelGameCharacter.CardStatus.PICKED);
         JudgeManager.afterPickingTurn(game);
         return game;

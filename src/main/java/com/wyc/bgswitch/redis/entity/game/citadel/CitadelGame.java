@@ -110,7 +110,7 @@ public class CitadelGame {
             int currentCharacterIdx = turn - 2 * numOfPlayers;
             CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
             CitadelPlayer player = this.getPlayers().stream().filter(
-                    p -> p.getCharacter1().equals(character) || p.getCharacter2().equals(character)
+                    p -> p.getCharacters().contains(character)
             ).findAny().orElse(null);
             return player;
         }

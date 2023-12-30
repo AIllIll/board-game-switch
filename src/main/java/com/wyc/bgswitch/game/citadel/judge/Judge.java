@@ -89,8 +89,7 @@ public abstract class Judge {
         game.setCrown(game.getHeir());
         // 2.
         game.getPlayers().forEach(p -> {
-            p.setCharacter1(null);
-            p.setCharacter2(null);
+            p.setCharacters(null);
         });
         // 3.
         game.setRound(game.getRound() + 1);

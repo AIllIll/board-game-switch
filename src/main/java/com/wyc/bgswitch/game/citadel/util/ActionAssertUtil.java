@@ -150,7 +150,7 @@ public class ActionAssertUtil {
         CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
         CitadelPlayer player = game.getPlayers().stream().filter(p -> p.getUserId().equals(userId)).findAny()
                 .orElse(CitadelPlayer.emptyPlayer());
-        if (player.getCharacter1() != character && player.getCharacter2() != character) {
+        if (!player.getCharacters().contains(character)) {
             throw new ActionUnavailableException("It's not your turn to move.");
         }
     }
