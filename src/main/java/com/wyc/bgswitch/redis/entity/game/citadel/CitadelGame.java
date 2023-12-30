@@ -103,16 +103,17 @@ public class CitadelGame {
     public int getCurrentPlayerIdx() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
-        if (turn < 2 * numOfPlayers) {
+        if (isInPickingTurn()) {
             return (this.getCrown() + turn) % numOfPlayers;
-        } else {
-            int currentCharacterIdx = turn - 2 * numOfPlayers;
+        } else if (isInCharacterTurn()) {
+            int currentCharacterIdx = getCurrentCharacterIdx();
             CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).getCharacters().contains(character)) {
                     return i;
                 }
             }
+            return -1;
         }
         return -1;
     }
@@ -132,19 +133,28 @@ public class CitadelGame {
         return player == null ? null : player.getUserId();
     }
 
+    public int getCurrentCharacterIdx() {
+        if (!isInCharacterTurn()) {
+            return -1;
+        }
+        int turn = this.getTurn();
+        int numOfPlayers = this.getPlayers().size();
+        return turn - 2 * numOfPlayers;
+    }
+
 
     @JsonIgnore
     public Boolean isInPickingTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
-        return turn < 2 * numOfPlayers;
+        return turn < 2 * numOfPlayers && turn >= 0;
     }
 
     @JsonIgnore
     public Boolean isInCharacterTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
-        return turn >= 2 * numOfPlayers;
+        return turn >= 2 * numOfPlayers && turn - 2 * numOfPlayers < 8;
     }
 
     @JsonIgnore
