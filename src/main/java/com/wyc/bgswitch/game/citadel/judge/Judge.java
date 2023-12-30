@@ -142,7 +142,8 @@ public abstract class Judge {
      * 1. clear player status
      * 2. mark current character status as over
      * 3. increase turn to next character
-     * 4. do afterRound if all turns are over
+     * 4. update heir
+     * 5. do afterRound if all turns are over
      *
      * @param game
      */
@@ -161,7 +162,11 @@ public abstract class Judge {
             }
         }
         game.setTurn(i + game.getPlayers().size() * 2);
-        // 4. do afterRound if all turns are over
+        // 4. update heir (after turn increased)
+        if (game.isCharacterTurnOf(CitadelGameCharacter.KING)) {
+            game.setHeir(game.getCurrentPlayerIdx());
+        }
+        // 5. do afterRound if all turns are over
         if (i == 8) {
             // all turns are over
             JudgeManager.afterRound(game);

@@ -100,19 +100,30 @@ public class CitadelGame {
         return this.getCreatedAt();
     }
 
-    @JsonIgnore
-    public CitadelPlayer getCurrentPlayer() {
+    public int getCurrentPlayerIdx() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
         if (turn < 2 * numOfPlayers) {
-            return this.getPlayers().get((this.getCrown() + turn) % numOfPlayers);
+            return (this.getCrown() + turn) % numOfPlayers;
         } else {
             int currentCharacterIdx = turn - 2 * numOfPlayers;
             CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
-            CitadelPlayer player = this.getPlayers().stream().filter(
-                    p -> p.getCharacters().contains(character)
-            ).findAny().orElse(null);
-            return player;
+            for (int i = 0; i < players.size(); i++) {
+                if (players.get(i).getCharacters().contains(character)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @JsonIgnore
+    public CitadelPlayer getCurrentPlayer() {
+        int idx = getCurrentPlayerIdx();
+        if (idx >= 0 && idx < players.size()) {
+            return players.get(idx);
+        } else {
+            return null;
         }
     }
 
@@ -134,5 +145,13 @@ public class CitadelGame {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
         return turn >= 2 * numOfPlayers;
+    }
+
+    @JsonIgnore
+    public Boolean isCharacterTurnOf(CitadelGameCharacter character) {
+        int turn = this.getTurn();
+        int numOfPlayers = this.getPlayers().size();
+        int characterTurn = turn - 2 * numOfPlayers;
+        return characterTurn == character.ordinal();
     }
 }
