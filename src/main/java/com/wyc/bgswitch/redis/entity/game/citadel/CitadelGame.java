@@ -38,10 +38,10 @@ public class CitadelGame {
     private CitadelGameConfig config;
     @NonNull
     private String hostId; // 房主
-    private List<CitadelPlayer> players; // 玩家列表
-    private List<CitadelGameAction> actions; // 玩家行为记录
+    private List<CitadelPlayer> players = new ArrayList<>(); // 玩家列表
+    private List<CitadelGameAction> actions = new ArrayList<>(); // 玩家行为记录
     private GameStatus status = GameStatus.PREPARE; // 游戏状态
-    private List<Integer> cardDeck; // 牌堆
+    private List<Integer> cardDeck = new ArrayList<>(); // 牌堆
     private Integer crown = 0; // 皇冠：玩家序号
     private Integer heir = 0; // 继承人：玩家序号
     private Integer round = 0; // 回合数
@@ -142,15 +142,12 @@ public class CitadelGame {
         return turn - 2 * numOfPlayers;
     }
 
-
-    @JsonIgnore
     public Boolean isInPickingTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
         return turn < 2 * numOfPlayers && turn >= 0;
     }
 
-    @JsonIgnore
     public Boolean isInCharacterTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();

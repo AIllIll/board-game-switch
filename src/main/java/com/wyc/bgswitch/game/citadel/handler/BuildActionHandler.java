@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wyc.bgswitch.game.annotation.Handler;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
 import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
+import com.wyc.bgswitch.game.citadel.judge.JudgeManager;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.citadel.util.ActionAssertUtil;
@@ -39,6 +40,7 @@ public class BuildActionHandler implements ActionHandler {
         player.getDistricts().sort(Integer::compareTo); // add to districts
         player.setCoins(player.getCoins() - card.getCost()); // cost coins
         player.getStatus().costBuildTimes(); // cost build times
+        JudgeManager.afterMove(game);
         return game;
     }
 }

@@ -7,6 +7,7 @@ import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.citadel.util.ActionAssertUtil;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class DrawCardsActionHandler implements ActionHandler {
         CitadelPlayer player = game.getCurrentPlayer();
         List<Integer> cardDeck = game.getCardDeck();
         int drawNum = 2; // todo: extra draws
-        player.setDrawnCards(cardDeck.subList(0, drawNum));
+        player.setDrawnCards(new ArrayList<>(cardDeck.subList(0, drawNum)));
         cardDeck.subList(0, drawNum).clear();
         player.getStatus().setCollecting(true);
         return game;

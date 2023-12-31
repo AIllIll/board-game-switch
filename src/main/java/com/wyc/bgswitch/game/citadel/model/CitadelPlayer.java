@@ -21,7 +21,7 @@ public class CitadelPlayer {
     private Integer visibleScore = 0; // 可见得分
     private List<CitadelGameCharacter> characters = new ArrayList<>(); // 身份
     private Integer coins = 0; // 金币
-    private List<Integer> hand; // 手牌
+    private List<Integer> hand = new ArrayList<>(); // 手牌
     private List<Integer> drawnCards; // 抽的牌
     private List<Integer> districts; // 建筑
     private Status status = new Status();
