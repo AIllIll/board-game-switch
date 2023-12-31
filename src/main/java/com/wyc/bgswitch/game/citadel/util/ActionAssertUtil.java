@@ -2,6 +2,7 @@ package com.wyc.bgswitch.game.citadel.util;
 
 import com.alibaba.fastjson.JSON;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
+import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.constant.GameStatus;
@@ -227,6 +228,38 @@ public class ActionAssertUtil {
         // todo
         if (keptCards.size() != 1) {
             throw new ActionUnavailableException("Keep too many district cards.");
+        }
+    }
+
+    /**
+     * 可以建
+     */
+    public static void assertCanBuild(CitadelGame game, CitadelGameAction action) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        if (player.getStatus().getBuildTimes() <= 0) {
+            throw new ActionUnavailableException("You have no more build times.");
+        }
+
+        int handIdx = JSON.parseObject(action.getBody(), Integer.class); // 第几张手牌
+        // 手牌不够
+        if (game.getCurrentPlayer().getHand() == null || game.getCurrentPlayer().getHand().size() < handIdx + 1) {
+            throw new ActionUnavailableException("District card not found.");
+        }
+        Integer cardIdx = game.getCurrentPlayer().getHand().get(handIdx);
+        // 卡不存在
+        if (cardIdx >= DistrictCard.values().length) {
+            throw new ActionUnavailableException("District card not found.");
+        }
+        List<Integer> districts = player.getDistricts();
+        // 重复建造
+        if (districts != null &&
+                districts.contains(cardIdx)) {
+            throw new ActionUnavailableException("An identical district has been built.");
+        }
+        // 钱够
+        DistrictCard card = DistrictCard.values()[cardIdx];
+        if (player.getCoins() < card.getCost()) {
+            throw new ActionUnavailableException("You don't have enough coins.");
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.game.citadel.model;
 
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
+import com.wyc.bgswitch.game.citadel.util.DistrictUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class CitadelPlayer {
     private Integer coins = 0; // 金币
     private List<Integer> hand; // 手牌
     private List<Integer> drawnCards; // 抽的牌
-    private Map<Integer, List<Integer>> districts; // 建筑
+    private List<Integer> districts; // 建筑
     private Status status = new Status();
 
     public CitadelPlayer(String userId) {
@@ -39,6 +40,10 @@ public class CitadelPlayer {
         return p;
     }
 
+    public Map<Integer, List<Integer>> getDistrictMap() {
+        return DistrictUtil.convertListToIdMap(districts);
+    }
+
     public void resetStatus() {
         this.status = new Status();
     }
@@ -50,5 +55,11 @@ public class CitadelPlayer {
         private boolean collecting = false;
         // finished collect action
         private boolean collected = false;
+        // times to build
+        private int buildTimes = 1;
+
+        public void costBuildTimes() {
+            buildTimes -= 1;
+        }
     }
 }

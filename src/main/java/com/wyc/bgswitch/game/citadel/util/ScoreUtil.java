@@ -16,12 +16,12 @@ import lombok.Getter;
 public class ScoreUtil {
     public static int computeVisibleScore(CitadelPlayer player) {
         int score = 0;
-        Map<Integer, List<Integer>> districtMap = player.getDistricts();
         // score of districts
-        if (districtMap != null) {
+        if (player.getDistricts() != null) {
+            Map<DistrictCard.DistrictCardType, List<DistrictCard>> districtMap = DistrictUtil.convertListToMap(player.getDistricts());
             for (DistrictCard.DistrictCardType t : DistrictCard.DistrictCardType.values()) {
-                List<Integer> districtsOfOneColor = districtMap.getOrDefault(t.ordinal(), Collections.emptyList());
-                score += districtsOfOneColor.stream().reduce((districtId, sum) -> DistrictCard.getCardByOrdinal(districtId).getCost() + sum).get();
+                List<DistrictCard> districtsOfOneColor = districtMap.getOrDefault(t, Collections.emptyList());
+                score += districtsOfOneColor.stream().map(DistrictCard::getCost).reduce(Integer::sum).orElse(0);
             }
             if (districtMap.values().stream().filter(l -> l != null && l.size() > 0).toList().size() == 5) {
                 score += extraScore.ALL_COLORS.getPoints();
