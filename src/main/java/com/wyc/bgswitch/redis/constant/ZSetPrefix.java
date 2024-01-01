@@ -1,4 +1,4 @@
-package com.wyc.bgswitch.redis.zset;
+package com.wyc.bgswitch.redis.constant;
 
 /**
  * @author wyc

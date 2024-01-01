@@ -3,10 +3,12 @@ package com.wyc.bgswitch.service;
 import static com.wyc.bgswitch.config.lock.RedisLockPrefix.LOCK_PREFIX_ROOM_USERS;
 import static com.wyc.bgswitch.config.lock.RedisLockPrefix.LOCK_PREFIX_USER_ROOMS;
 
+import com.wyc.bgswitch.entity.RoomInfoVO;
 import com.wyc.bgswitch.lock.LockManager;
 import com.wyc.bgswitch.redis.zset.RoomGamesZSetManager;
 import com.wyc.bgswitch.redis.zset.RoomUsersZSetManager;
 import com.wyc.bgswitch.redis.zset.UserRoomsZSetManager;
+import com.wyc.bgswitch.service.message.RoomMessageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.redis.util.RedisLockRegistry;
@@ -82,7 +84,7 @@ public class RoomService {
         }
     }
 
-    public List<String> getRoomUsers(String roomId) {
+    public List<String> getRoomUserIds(String roomId) {
         return roomUsersZSetManager.getAll(roomId);
     }
 
@@ -98,16 +100,32 @@ public class RoomService {
         return userId.equals(roomUsersZSetManager.getFirst(roomId));
     }
 
-    public String getCurrentGame(String roomId) {
-        return roomUsersZSetManager.getLast(roomId);
+    /**
+     * @param roomId
+     * @return gameIdWithPrefix
+     */
+    public String getLastGameId(String roomId) {
+        return roomGamesZSetManager.getLast(roomId);
     }
 
-    public void attachGameToRoom(String roomId, String gameId) {
-        roomUsersZSetManager.add(roomId, gameId);
+    /**
+     * @param roomId
+     * @param gameIdWithPrefix
+     */
+    public void attachGameToRoom(String roomId, String gameIdWithPrefix) {
+        roomGamesZSetManager.add(roomId, gameIdWithPrefix);
     }
 
     public List<String> getGames(String roomId) {
         return roomGamesZSetManager.getAll(roomId);
     }
 
+
+    public RoomInfoVO getRoomInfo(String roomId) {
+        return new RoomInfoVO(
+                roomId,
+                getRoomUserIds(roomId),
+                getLastGameId(roomId)
+        );
+    }
 }

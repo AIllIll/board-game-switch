@@ -6,5 +6,6 @@ import com.wyc.bgswitch.redis.entity.Room;
 /**
  * @author wyc
  */
+@Deprecated
 public interface RoomRepository extends BaseRepository<Room, String> {
 }

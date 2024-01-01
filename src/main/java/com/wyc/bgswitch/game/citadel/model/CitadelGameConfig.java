@@ -8,8 +8,10 @@ import lombok.NonNull;
  */
 @Data
 public class CitadelGameConfig {
-    public static CitadelGameConfig defaultConfig = new CitadelGameConfig(4);
     @NonNull
     private Integer playerNumber;
-    private Long createdAt;
+
+    public static CitadelGameConfig getDefaultConfig() {
+        return new CitadelGameConfig(4);
+    }
 }

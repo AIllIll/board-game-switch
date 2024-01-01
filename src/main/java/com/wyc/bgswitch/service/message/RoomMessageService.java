@@ -1,6 +1,6 @@
-package com.wyc.bgswitch.service;
+package com.wyc.bgswitch.service.message;
 
-import com.wyc.bgswitch.entity.RoomInfo;
+import com.wyc.bgswitch.entity.RoomInfoVO;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,8 +19,8 @@ public class RoomMessageService {
         this.messaging = messaging;
     }
 
-    public void notifyRoomChanged(RoomInfo roomInfo) {
-        roomInfo.getUsers().forEach(u -> {
+    public void notifyUpdate(RoomInfoVO roomInfo) {
+        roomInfo.getUserIds().forEach(u -> {
             messaging.convertAndSendToUser(u, String.format("%s/%s", channelPrefixRoom, roomInfo.getId()), roomInfo);
         });
     }

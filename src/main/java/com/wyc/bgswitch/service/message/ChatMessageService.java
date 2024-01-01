@@ -1,6 +1,7 @@
-package com.wyc.bgswitch.service;
+package com.wyc.bgswitch.service.message;
 
 import com.wyc.bgswitch.entity.ChatMessage;
+import com.wyc.bgswitch.service.RoomService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,7 @@ public class ChatMessageService {
     public void sendToRoom(String room, ChatMessage msg) {
         // 提供标记，给前端判断消息的房间，无需通过地址判断
         msg.setToRoom(room);
-        List<String> userList = roomService.getRoomUsers(room);
+        List<String> userList = roomService.getRoomUserIds(room);
         for (String receiver : userList) {
             messaging.convertAndSendToUser(receiver, String.format("%s/room/%s", channelPrefixChat, room), msg);
         }

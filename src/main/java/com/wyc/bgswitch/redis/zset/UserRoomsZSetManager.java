@@ -1,6 +1,8 @@
 package com.wyc.bgswitch.redis.zset;
 
-import static com.wyc.bgswitch.redis.zset.ZSetPrefix.USER_ROOMS;
+import static com.wyc.bgswitch.redis.constant.ZSetPrefix.USER_ROOMS;
+
+import com.wyc.bgswitch.redis.constant.ZSetPrefix;
 
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;

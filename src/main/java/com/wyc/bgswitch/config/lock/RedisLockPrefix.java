@@ -13,6 +13,7 @@ public enum RedisLockPrefix {
     LOCK_PREFIX_USERNAME("username"), // for register
     LOCK_PREFIX_ROOM_USERS("room-users"),
     LOCK_PREFIX_USER_ROOMS("user-rooms"),
+    LOCK_PREFIX_GAME("game"),
     DEFAULT(null);
 
     private static final String CONNECTOR = "_";
