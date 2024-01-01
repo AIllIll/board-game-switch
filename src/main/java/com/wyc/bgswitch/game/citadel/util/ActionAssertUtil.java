@@ -1,6 +1,6 @@
 package com.wyc.bgswitch.game.citadel.util;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
@@ -260,6 +260,31 @@ public class ActionAssertUtil {
         DistrictCard card = DistrictCard.values()[cardIdx];
         if (player.getCoins() < card.getCost()) {
             throw new ActionUnavailableException("You don't have enough coins.");
+        }
+    }
+
+    /**
+     * 可以使用技能
+     *
+     * @param game
+     * @param ability 技能
+     */
+    public static void assertCanUseAbility(CitadelGame game, CitadelGameCharacter.Ability ability) {
+        int currentCharacterIdx = game.getCurrentCharacterIdx();
+        CitadelGameCharacter.InGameStatus status = game.getCharacterStatus().get(currentCharacterIdx);
+        CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
+        // not killed
+        if (status.isAssassinated()) {
+            throw new ActionUnavailableException("Your character have been assassinated.");
+        }
+        // character has that ability
+        if (!character.getAbilities().contains(ability)) {
+            throw new ActionUnavailableException("Your current character doesn't have that ability.");
+        }
+        // it hasn't been used
+        int abilityIdx = character.getAbilities().indexOf(ability);
+        if (status.getAbilityUsed()[abilityIdx]) {
+            throw new ActionUnavailableException("You have used the ability.");
         }
     }
 }

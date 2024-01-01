@@ -139,20 +139,59 @@ public abstract class Judge {
     }
 
     /**
+     * AfterTurn is also beforeNextTurn.
+     * <p>
+     * after turn:
      * 1. clear player status
-     * 2. mark current character status as over
-     * 3. increase turn to next character
-     * 4. update heir
-     * 5. do afterRound if all turns are over
+     * 2. nextCharacterTurn:
+     * - 2.1 mark current character status as over
+     * - 2.2 increase turn to next character
+     * - 2.3 do afterRound if all turns are over
+     * before next turn:
+     * 1. update heir
+     * 2. skip turn of assassinated character
+     * 3. steal money from character for the thief
      *
      * @param game
      */
     @OverridingMethodsMustInvokeSuper
     public void afterCharacterTurn(CitadelGame game) {
+        // after turn:
         // 1. clear player status
         game.getCurrentPlayer().resetStatus();
+        // 2. nextCharacterTurn
+        nextCharacterTurn(game); // could lead to round finish
+        if (!game.isInCharacterTurn()) {
+            return;
+        }
+        // before next turn:
+        // 1. update heir (after turn increased)
+        if (game.isCharacterTurnOf(CitadelGameCharacter.KING)) {
+            game.setHeir(game.getCurrentPlayerIdx());
+        }
+        // 2. skip turn of assassinated character
+        if (game.getCharacterStatus().get(game.getCurrentCharacterIdx()).isAssassinated()) {
+            nextCharacterTurn(game); // could lead to round finish
+            if (!game.isInCharacterTurn()) {
+                return;
+            }
+        }
+        // 3. steal money from character for the thief
+        if (game.getCharacterStatus().get(game.getCurrentCharacterIdx()).isStolen()) {
+            int stolenCoins = game.getCurrentPlayer().getCoins();
+            game.getCurrentPlayer().setCoins(0);
+            game.getPlayers().forEach(p -> {
+                if (p.getCharacters().contains(CitadelGameCharacter.THIEF)) {
+                    p.setCoins(p.getCoins() + stolenCoins);
+                }
+            });
+        }
+
+    }
+
+    private void nextCharacterTurn(CitadelGame game) {
         // 2. mark current character status as over
-        int i = game.getTurn() - game.getPlayers().size() * 2;
+        int i = game.getCurrentCharacterIdx();
         game.getCharacterStatus().get(i).setOver(true);
         // 3. increase turn to next character
         for (; i < 8; i++) {
@@ -162,11 +201,7 @@ public abstract class Judge {
             }
         }
         game.setTurn(i + game.getPlayers().size() * 2);
-        // 4. update heir (after turn increased)
-        if (game.isCharacterTurnOf(CitadelGameCharacter.KING)) {
-            game.setHeir(game.getCurrentPlayerIdx());
-        }
-        // 5. do afterRound if all turns are over
+        // do afterRound if all turns are over
         if (i == 8) {
             // all turns are over
             JudgeManager.afterRound(game);

@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -93,7 +94,9 @@ public class CitadelGame {
     }
 
     public void clearCharacterStatus() {
-        this.setCharacterStatus(new ArrayList<>(Collections.nCopies(8, new CitadelGameCharacter.InGameStatus())));
+        this.setCharacterStatus(new ArrayList<>(
+                Arrays.stream(CitadelGameCharacter.values()).map(CitadelGameCharacter.InGameStatus::new).toList()
+        ));
     }
 
     public Long getRandomSeed() {

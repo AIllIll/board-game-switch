@@ -92,6 +92,12 @@ public class CitadelGameController {
         }
     }
 
+    /**
+     * <a href="http://localhost:8080/api/game/citadel/constant">...</a>
+     *
+     * @return
+     * @throws ClassNotFoundException
+     */
     @GetMapping("/constant")
     public List<String> constant() throws ClassNotFoundException {
         return List.of(

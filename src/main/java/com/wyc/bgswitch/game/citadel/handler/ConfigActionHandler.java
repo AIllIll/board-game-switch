@@ -1,6 +1,6 @@
 package com.wyc.bgswitch.game.citadel.handler;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.wyc.bgswitch.game.annotation.Handler;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
