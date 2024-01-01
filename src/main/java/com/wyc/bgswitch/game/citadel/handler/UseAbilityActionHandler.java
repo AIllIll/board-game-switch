@@ -12,6 +12,9 @@ import com.wyc.bgswitch.game.citadel.util.ActionAssertUtil;
 import com.wyc.bgswitch.game.exception.ActionUnavailableException;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 
+import org.bouncycastle.util.Arrays;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,10 +86,15 @@ public class UseAbilityActionHandler implements ActionHandler {
                 int[] discardList = body.magicAbilityParam.discardList;
                 List<Integer> drawCards = game.getCardDeck().subList(0, discardList.length); // todo： 如果抽爆了要洗牌
                 List<Integer> hand = currentPlayer.getHand();
-                for (int handIdx : discardList) {
-                    hand.remove(handIdx); // 丢弃
+                List<Integer> newHand = new ArrayList<>();
+                for (int i = 0; i < hand.size(); i++) {
+                    if (!Arrays.contains(discardList, i)) {
+                        newHand.add(hand.get(i));
+                    }
                 }
-                hand.addAll(drawCards); // 获取新卡
+                newHand.addAll(drawCards); // 获取新卡
+                newHand.sort(Integer::compareTo);
+                currentPlayer.setHand(newHand);
                 drawCards.clear();
             } else {
                 throw new ActionUnavailableException("No such magic option.");
