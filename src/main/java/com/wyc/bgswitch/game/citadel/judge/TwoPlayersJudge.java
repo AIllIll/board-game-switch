@@ -23,6 +23,9 @@ public class TwoPlayersJudge extends Judge {
         // 1. hide 1 character for second player to pick at last
         List<CitadelGameCharacter.CardStatus> statusList = game.getCharacterCardStatus();
         Random random = new Random(game.getRandomSeed());
+        for (int i = 0; i < game.getRound(); i++) {
+            random.nextInt(statusList.size());
+        }
         int hiddenIdx = random.nextInt(statusList.size());
         statusList.set(hiddenIdx, CitadelGameCharacter.CardStatus.HIDDEN);
     }

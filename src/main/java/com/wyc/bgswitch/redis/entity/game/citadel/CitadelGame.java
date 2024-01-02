@@ -100,7 +100,8 @@ public class CitadelGame {
     }
 
     public Long getRandomSeed() {
-        return this.getCreatedAt();
+        // 每个回合是不一样的随机数
+        return this.getCreatedAt() * this.round;
     }
 
     public int getCurrentPlayerIdx() {
