@@ -113,6 +113,9 @@ public class UseAbilityActionHandler implements ActionHandler {
         } else if (CitadelGameCharacter.Ability.Destroy.equals(ability)) {
             // 摧毁
             int targetPlayerIdx = body.destroyAbilityParam.playerIdx;
+            if (game.getPlayers().get(targetPlayerIdx).getCharacters().contains(CitadelGameCharacter.BISHOP)) {
+                throw new ActionUnavailableException("The district is in bishop's protection.");
+            }
             int districtCardId = body.destroyAbilityParam.districtCardId;
             CitadelPlayer currentPlayer = game.getCurrentPlayer();
             int coinsLeft = currentPlayer.getCoins() - (DistrictCard.values()[districtCardId].getCost() - 1);
