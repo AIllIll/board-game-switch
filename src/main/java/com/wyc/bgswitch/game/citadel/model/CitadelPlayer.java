@@ -24,7 +24,7 @@ public class CitadelPlayer {
     private List<Integer> hand = new ArrayList<>(); // 手牌
     private List<Integer> drawnCards; // 抽的牌
     private List<Integer> districts; // 建筑
-    private Status status = new Status();
+    private Status status = new Status(); // status reset every character turn
 
     public CitadelPlayer(String userId) {
         this.userId = userId;
@@ -57,6 +57,12 @@ public class CitadelPlayer {
         private boolean collected = false;
         // times to build
         private int buildTimes = 1;
+        // number of draw
+        private int draw = 2;
+        // number of keep
+        private int keep = 1;
+        // defense: extra cost (base on district cost) to destroy this player's districts, default is -1
+        private int defense = -1;
 
         public void costBuildTimes() {
             buildTimes -= 1;

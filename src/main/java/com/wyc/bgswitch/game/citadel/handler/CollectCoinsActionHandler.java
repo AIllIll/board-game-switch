@@ -26,6 +26,10 @@ public class CollectCoinsActionHandler implements ActionHandler {
         CitadelPlayer player = game.getCurrentPlayer();
         player.setCoins(player.getCoins() + 2);
         player.getStatus().setCollected(true);
+
+        // after action
+        JudgeManager.afterAction(game);
+        // after move
         JudgeManager.afterMove(game);
         return game;
     }

@@ -42,6 +42,9 @@ public class ReturnCardsActionHandler implements ActionHandler {
         player.setDrawnCards(null); // clear list
         player.getStatus().setCollecting(false);
         player.getStatus().setCollected(true);
+        player.getHand().sort(Integer::compareTo);
+        // after action
+        JudgeManager.afterAction(game);
         // after move
         JudgeManager.afterMove(game);
         return game;

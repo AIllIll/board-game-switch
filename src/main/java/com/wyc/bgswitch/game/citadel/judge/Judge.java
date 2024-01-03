@@ -143,14 +143,17 @@ public abstract class Judge {
      * <p>
      * after turn:
      * 1. clear player status
-     * 2. nextCharacterTurn:
-     * - 2.1 mark current character status as over
-     * - 2.2 increase turn to next character
-     * - 2.3 do afterRound if all turns are over
+     * 2.
+     * 3. nextCharacterTurn:
+     * - 3.1 mark current character status as over
+     * - 3.2 increase turn to next character
+     * - 3.3 do afterRound if all turns are over
      * before next turn:
      * 1. update heir
      * 2. skip turn of assassinated character
      * 3. steal money from character for the thief
+     * 4. add character buff to player
+     * 5. add district buff to player
      *
      * @param game
      */
@@ -159,7 +162,9 @@ public abstract class Judge {
         // after turn:
         // 1. clear player status
         game.getCurrentPlayer().resetStatus();
-        // 2. nextCharacterTurn
+        // 2. check winner
+
+        // 3. nextCharacterTurn
         nextCharacterTurn(game); // could lead to round finish
         if (!game.isInCharacterTurn()) {
             return;
@@ -186,6 +191,10 @@ public abstract class Judge {
                 }
             });
         }
+        // 4. add character buff to player
+        addCharacterBuff(game);
+        // 5. add district buff to player
+        addDistrictBuff(game);
 
     }
 
@@ -206,6 +215,41 @@ public abstract class Judge {
             // all turns are over
             JudgeManager.afterRound(game);
             JudgeManager.beforeRound(game);
+        }
+    }
+
+    private void addCharacterBuff(CitadelGame game) {
+        if (game.getCurrentCharacterIdx() == CitadelGameCharacter.ARCHITECT.ordinal()) {
+            CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
+            status.setBuildTimes(status.getBuildTimes() + 2); // extra 2 build times
+        }
+    }
+
+    private void addDistrictBuff(CitadelGame game) {
+//        CitadelPlayer player = game.getCurrentPlayer();
+//        if (player.getDistricts().contains(DistrictCard.Great_Wall.ordinal())) {
+//            CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
+//            status.setDefense(status.getDefense() + 1);
+//        }
+    }
+
+    /**
+     * after player finish "Action": collect 2 coins or draw 2 cards and keep 1
+     *
+     * @param game
+     */
+    public void afterAction(CitadelGame game) {
+        CitadelPlayer player = game.getCurrentPlayer();
+        // give 2 extra cards to Architect
+        if (game.getCurrentCharacterIdx() == CitadelGameCharacter.ARCHITECT.ordinal()) {
+            List<Integer> cardDeck = game.getCardDeck();
+            player.getHand().addAll(cardDeck.subList(0, 2));
+            player.getHand().sort(Integer::compareTo);
+            cardDeck.subList(0, 2).clear();
+        }
+        // give 1 extra coin to Merchant
+        if (game.getCurrentCharacterIdx() == CitadelGameCharacter.MERCHANT.ordinal()) {
+            player.setCoins(player.getCoins() + 1);
         }
     }
 

@@ -26,7 +26,7 @@ public class DrawCardsActionHandler implements ActionHandler {
     public CitadelGame handle(CitadelGame game, CitadelGameAction action, String userId) {
         CitadelPlayer player = game.getCurrentPlayer();
         List<Integer> cardDeck = game.getCardDeck();
-        int drawNum = 2; // todo: extra draws
+        int drawNum = player.getStatus().getDraw();
         player.setDrawnCards(new ArrayList<>(cardDeck.subList(0, drawNum)));
         cardDeck.subList(0, drawNum).clear();
         player.getStatus().setCollecting(true);

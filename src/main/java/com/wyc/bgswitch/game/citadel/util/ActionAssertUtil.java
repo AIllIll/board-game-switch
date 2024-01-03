@@ -225,8 +225,7 @@ public class ActionAssertUtil {
     public static void assertKeepingCardNumber(CitadelGame game, CitadelGameAction action) {
         List<Integer> keptCards = JSON.parseArray(action.getBody(), Integer.class);
         CitadelPlayer player = game.getCurrentPlayer();
-        // todo
-        if (keptCards.size() != 1) {
+        if (keptCards.size() > player.getStatus().getKeep()) {
             throw new ActionUnavailableException("Keep too many district cards.");
         }
     }
