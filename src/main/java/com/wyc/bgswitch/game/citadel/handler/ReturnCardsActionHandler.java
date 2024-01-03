@@ -3,6 +3,7 @@ package com.wyc.bgswitch.game.citadel.handler;
 import com.alibaba.fastjson2.JSON;
 import com.wyc.bgswitch.game.annotation.Handler;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
+import com.wyc.bgswitch.game.citadel.judge.JudgeManager;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.citadel.util.ActionAssertUtil;
@@ -41,6 +42,8 @@ public class ReturnCardsActionHandler implements ActionHandler {
         player.setDrawnCards(null); // clear list
         player.getStatus().setCollecting(false);
         player.getStatus().setCollected(true);
+        // after move
+        JudgeManager.afterMove(game);
         return game;
     }
 }

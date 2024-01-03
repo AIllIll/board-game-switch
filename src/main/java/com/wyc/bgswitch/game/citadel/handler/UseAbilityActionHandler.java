@@ -6,6 +6,7 @@ import com.wyc.bgswitch.game.annotation.Handler;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
+import com.wyc.bgswitch.game.citadel.judge.JudgeManager;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.citadel.util.ActionAssertUtil;
@@ -114,18 +115,19 @@ public class UseAbilityActionHandler implements ActionHandler {
             int targetPlayerIdx = body.destroyAbilityParam.playerIdx;
             int districtCardId = body.destroyAbilityParam.districtCardId;
             CitadelPlayer currentPlayer = game.getCurrentPlayer();
-            int coinsLeft = currentPlayer.getCoins() - (DistrictCard.values()[targetPlayerIdx].getCost() - 1);
+            int coinsLeft = currentPlayer.getCoins() - (DistrictCard.values()[districtCardId].getCost() - 1);
             if (coinsLeft < 0) {
                 throw new ActionUnavailableException("Not enough coins to pay for the destruction.");
             }
             currentPlayer.setCoins(coinsLeft);
             CitadelPlayer targetPlayer = game.getPlayers().get(targetPlayerIdx);
-            targetPlayer.getDistricts().remove(Integer.valueOf(districtCardId));
+            targetPlayer.getDistricts().remove((Integer) districtCardId);
         }
 
         // marked ability as used
         int abilityIdx = character.getAbilities().indexOf(ability);
         game.getCharacterStatus().get(currentCharacterIdx).getAbilityUsed()[abilityIdx] = true;
+        JudgeManager.afterMove(game);
         return game;
     }
 
