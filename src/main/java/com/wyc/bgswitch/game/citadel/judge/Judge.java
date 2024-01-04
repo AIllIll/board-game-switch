@@ -5,6 +5,7 @@ import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
 import com.wyc.bgswitch.game.citadel.util.ScoreUtil;
+import com.wyc.bgswitch.game.constant.GameStatus;
 import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public abstract class Judge {
         // 5.round
         game.setRound(0);
         // 6.firstFinishedPlayer
-        game.setFirstFinishedPlayer(-1);
+        game.setFirstPlace(-1);
         // 7.initialize pickingTurn
         game.setTurn(0);
         // 8.initialize characterCardStatus
@@ -125,17 +126,27 @@ public abstract class Judge {
     }
 
     /**
-     * update score for every player
+     * 1. check if anyone has built 8 district
+     * 2. update score for every player
      * (some moves might change other players' score)
      *
      * @param game
      */
     @OverridingMethodsMustInvokeSuper
     public final void afterMove(CitadelGame game) {
+        // 1. check if anyone has built 8 district
         game.getPlayers().forEach(p -> {
-            p.setScore(ScoreUtil.computeScore(p)); // todo: hide score from other players
-            p.setVisibleScore(ScoreUtil.computeScore(p)); // todo: check computation logic
+            int criterion = 8; // todo: some district card might change this
+            if (p.getDistricts().size() >= criterion) {
+                game.setFirstPlace(game.getCurrentPlayerIdx());
+            }
         });
+        // 2. update score for every player
+        game.getPlayers().forEach(p -> {
+            p.setScore(ScoreUtil.computeScore(game, p)); // todo: hide score from other players
+            p.setVisibleScore(ScoreUtil.computeScore(game, p)); // todo: check computation logic
+        });
+
     }
 
     /**
@@ -254,13 +265,14 @@ public abstract class Judge {
     }
 
     /**
-     * 1. check score and announce winner
+     * 1. check score and end game
      *
      * @param game
      */
     public void afterRound(CitadelGame game) {
         // 1. check score and announce winner
-        if (game.getFirstFinishedPlayer() >= 0) {
+        if (game.getFirstPlace() >= 0) {
+            game.setStatus(GameStatus.END);
             game.setFinishedAt(new Date().getTime());
         }
     }

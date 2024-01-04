@@ -15,7 +15,7 @@ import java.util.List;
  * @author wyc
  */
 @Handler(CitadelGameActionType.RETURN_CARDS)
-public class ReturnCardsActionHandler implements ActionHandler {
+public class KeepCardsActionHandler implements ActionHandler {
     @Override
     public void check(CitadelGame game, CitadelGameAction action, String userId) {
         ActionAssertUtil.assertStatusOngoing(game);

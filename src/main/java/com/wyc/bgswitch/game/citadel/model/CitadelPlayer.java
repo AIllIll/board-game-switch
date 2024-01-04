@@ -23,7 +23,7 @@ public class CitadelPlayer {
     private Integer coins = 0; // 金币
     private List<Integer> hand = new ArrayList<>(); // 手牌
     private List<Integer> drawnCards; // 抽的牌
-    private List<Integer> districts; // 建筑
+    private List<Integer> districts = new ArrayList<>(); // 建筑
     private Status status = new Status(); // status reset every character turn
 
     public CitadelPlayer(String userId) {

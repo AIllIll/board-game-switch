@@ -61,7 +61,7 @@ public class CitadelGame {
      */
     private List<CitadelGameCharacter.CardStatus> characterCardStatus; // 角色卡状态
     private List<CitadelGameCharacter.InGameStatus> characterStatus; // 角色状态
-    private Integer firstFinishedPlayer; // 第一个完成建筑的玩家
+    private Integer firstPlace; // 第一个完成建筑的玩家
     private Long createdAt;
     private Long startedAt;
     private Long finishedAt;
@@ -149,13 +149,13 @@ public class CitadelGame {
     public Boolean isInPickingTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
-        return turn < 2 * numOfPlayers && turn >= 0;
+        return this.status.equals(GameStatus.ONGOING) && turn < 2 * numOfPlayers && turn >= 0;
     }
 
     public Boolean isInCharacterTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
-        return turn >= 2 * numOfPlayers && turn - 2 * numOfPlayers < 8;
+        return this.status.equals(GameStatus.ONGOING) && turn >= 2 * numOfPlayers && turn - 2 * numOfPlayers < 8;
     }
 
     @JsonIgnore
