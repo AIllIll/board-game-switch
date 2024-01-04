@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ import lombok.NonNull;
 @RedisHash("bgs/repo/game/citadel")
 @Data
 @NoArgsConstructor(force = true)
-public class CitadelGame {
+public class CitadelGame implements Cloneable {
 
     public static final String GAME_PREFIX = "citadel/";
 
@@ -165,4 +166,41 @@ public class CitadelGame {
         int characterTurn = turn - 2 * numOfPlayers;
         return characterTurn == character.ordinal();
     }
+
+    @Override
+    public CitadelGame clone() {
+        try {
+            CitadelGame game = (CitadelGame) super.clone();
+            game.setPlayers(game.getPlayers().stream().map(CitadelPlayer::clone).toList());
+            return game;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public CitadelGame masked(String userId) {
+        CitadelGame game = this.clone();
+        // 隐藏用户信息
+        game.getPlayers().forEach(p -> {
+            if (!Objects.equals(p.getUserId(), userId)) {
+                // 隐藏用户角色
+                int currentCharacterIdx = game.getCurrentCharacterIdx();
+                if (p.getCharacters() != null) {
+                    p.setCharacters(p.getCharacters().stream().map(c -> c.ordinal() > currentCharacterIdx ? null : c).toList());
+                }
+                // 隐藏手牌
+                if (p.getHand() != null) {
+                    p.setHand(Collections.nCopies(p.getHand().size(), null));
+                }
+                // 隐藏真实分数
+                p.setScore(0);
+            }
+        });
+        // 隐藏牌堆
+        game.setCardDeck(game.getCardDeck().stream().map(c -> -1).toList());
+        return game;
+
+    }
+
+
 }

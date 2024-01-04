@@ -23,7 +23,7 @@ public class GameMessageService {
 
     public void notifyUpdate(List<String> userIds, CitadelGame game) {
         userIds.forEach(u -> {
-            messaging.convertAndSendToUser(u, String.format("%s/%s", channelPrefixGameCitadel, game.getId()), game);
+            messaging.convertAndSendToUser(u, String.format("%s/%s", channelPrefixGameCitadel, game.getId()), game.masked(u));
         });
     }
 }

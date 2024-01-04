@@ -15,7 +15,7 @@ import lombok.Setter;
  * @author wyc
  */
 @Data
-public class CitadelPlayer {
+public class CitadelPlayer implements Cloneable {
     private String userId;
     private Integer score = 0; // 总得分
     private Integer visibleScore = 0; // 可见得分
@@ -46,6 +46,17 @@ public class CitadelPlayer {
 
     public void resetStatus() {
         this.status = new Status();
+    }
+
+    @Override
+    public CitadelPlayer clone() {
+        try {
+            CitadelPlayer clone = (CitadelPlayer) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     @Setter
