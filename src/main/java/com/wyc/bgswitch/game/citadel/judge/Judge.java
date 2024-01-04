@@ -255,7 +255,7 @@ public abstract class Judge {
         if (game.getCurrentCharacterIdx() == CitadelGameCharacter.ARCHITECT.ordinal()) {
             List<Integer> cardDeck = game.getCardDeck();
             player.getHand().addAll(cardDeck.subList(0, 2));
-            player.getHand().sort(Integer::compareTo);
+//            player.getHand().sort(Integer::compareTo);
             cardDeck.subList(0, 2).clear();
         }
         // give 1 extra coin to Merchant

@@ -87,6 +87,7 @@ public class UseAbilityActionHandler implements ActionHandler {
                 int[] discardList = body.magicAbilityParam.discardList;
                 List<Integer> drawCards = game.getCardDeck().subList(0, discardList.length); // todo： 如果抽爆了要洗牌
                 List<Integer> hand = currentPlayer.getHand();
+                // 因为按idx删除的时候无法保序号
                 List<Integer> newHand = new ArrayList<>();
                 for (int i = 0; i < hand.size(); i++) {
                     if (!Arrays.contains(discardList, i)) {
@@ -160,7 +161,7 @@ public class UseAbilityActionHandler implements ActionHandler {
         /**
          * @param option      0 for exchange, 1 for discard and draw
          * @param playerIdx
-         * @param discardList
+         * @param discardList cardIds
          */
         public record MagicAbilityParam(int option, int playerIdx, int[] discardList) {
         }
