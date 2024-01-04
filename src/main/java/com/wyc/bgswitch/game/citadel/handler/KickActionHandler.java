@@ -18,18 +18,21 @@ import java.util.List;
 public class KickActionHandler implements ActionHandler {
     @Override
     public void check(CitadelGame game, CitadelGameAction action, String userId) {
-        Integer seatIdx = JSON.parseObject(action.getBody(), Integer.class);
+        String playerId = JSON.parseObject(action.getBody(), String.class);
         ActionAssertUtil.assertIsHost(game, userId);
         ActionAssertUtil.assertStatusPrepare(game);
-        ActionAssertUtil.assertSeatTaken(game, seatIdx);
+        ActionAssertUtil.assertPlayerIsSitting(game, playerId);
     }
 
     @Override
     public CitadelGame handle(CitadelGame game, CitadelGameAction action, String userId) {
-        Integer seatIdx = JSON.parseObject(action.getBody(), Integer.class);
-
+        String playerId = JSON.parseObject(action.getBody(), String.class);
         List<CitadelPlayer> playerList = new ArrayList<>(game.getPlayers());
-        playerList.set(seatIdx, CitadelPlayer.emptyPlayer());
+        for (int seatIdx = 0; seatIdx < playerList.size(); seatIdx++) {
+            if (playerId.equals(playerList.get(seatIdx).getUserId())) {
+                playerList.set(seatIdx, CitadelPlayer.emptyPlayer());
+            }
+        }
         game.setPlayers(playerList);
 
         return game;

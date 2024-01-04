@@ -69,16 +69,15 @@ public class ActionAssertUtil {
     }
 
     /**
-     * 座位有人
+     * player is sitting
      *
      * @param game
-     * @param seatIdx
+     * @param playerId
      * @return
      */
-    public static void assertSeatTaken(CitadelGame game, int seatIdx) {
-        List<CitadelPlayer> playerList = game.getPlayers();
-        if (playerList.get(seatIdx).getUserId() == null) {
-            throw new ActionUnavailableException("The seat have been taken.");
+    public static void assertPlayerIsSitting(CitadelGame game, String playerId) {
+        if (!game.getPlayers().stream().map(CitadelPlayer::getUserId).toList().contains(playerId)) {
+            throw new ActionUnavailableException("The player didn't sit.");
         }
     }
 
