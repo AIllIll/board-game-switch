@@ -77,11 +77,14 @@ public class UseAbilityActionHandler implements ActionHandler {
             // 魔术师有两个技能，2选1
             if (option == 0) {
                 // 交换手牌
-                int targetPlayerIdx = body.magicAbilityParam.playerIdx;
-                CitadelPlayer targetPlayer = game.getPlayers().get(targetPlayerIdx);
-                List<Integer> hisCardList = targetPlayer.getHand();
-                targetPlayer.setHand(currentPlayer.getHand());
-                currentPlayer.setHand(hisCardList);
+                String targetPlayerId = body.magicAbilityParam.playerId;
+                game.getPlayers().forEach(p -> {
+                    if (p.getUserId().equals(targetPlayerId)) {
+                        List<Integer> hisCardList = p.getHand();
+                        p.setHand(currentPlayer.getHand());
+                        currentPlayer.setHand(hisCardList);
+                    }
+                });
             } else if (option == 1) {
                 // 重铸
                 int[] discardList = body.magicAbilityParam.discardList;
@@ -113,8 +116,13 @@ public class UseAbilityActionHandler implements ActionHandler {
             }
         } else if (CitadelGameCharacter.Ability.Destroy.equals(ability)) {
             // 摧毁
-            int targetPlayerIdx = body.destroyAbilityParam.playerIdx;
-            if (game.getPlayers().get(targetPlayerIdx).getCharacters().contains(CitadelGameCharacter.BISHOP)) {
+            String targetPlayerId = body.destroyAbilityParam.playerId;
+            CitadelPlayer targetPlayer = game.getPlayers().stream()
+                    .filter(p -> targetPlayerId.equals(p.getUserId())).findAny().orElse(null);
+            if (targetPlayer == null) {
+                throw new ActionUnavailableException("Invalid player id.");
+            }
+            if (targetPlayer.getCharacters().contains(CitadelGameCharacter.BISHOP)) {
                 throw new ActionUnavailableException("The district is in bishop's protection.");
             }
             int districtCardId = body.destroyAbilityParam.districtCardId;
@@ -124,7 +132,6 @@ public class UseAbilityActionHandler implements ActionHandler {
                 throw new ActionUnavailableException("Not enough coins to pay for the destruction.");
             }
             currentPlayer.setCoins(coinsLeft);
-            CitadelPlayer targetPlayer = game.getPlayers().get(targetPlayerIdx);
             targetPlayer.getDistricts().remove((Integer) districtCardId);
         }
 
@@ -160,15 +167,15 @@ public class UseAbilityActionHandler implements ActionHandler {
 
         /**
          * @param option      0 for exchange, 1 for discard and draw
-         * @param playerIdx
+         * @param playerId
          * @param discardList cardIds
          */
-        public record MagicAbilityParam(int option, int playerIdx, int[] discardList) {
+        public record MagicAbilityParam(int option, String playerId, int[] discardList) {
         }
 
         /*Collect不需要*/
 
-        public record DestroyAbilityParam(int playerIdx, int districtCardId) {
+        public record DestroyAbilityParam(String playerId, int districtCardId) {
         }
 
 
