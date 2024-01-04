@@ -28,11 +28,10 @@ public class BuildActionHandler implements ActionHandler {
 
     @Override
     public CitadelGame handle(CitadelGame game, CitadelGameAction action, String userId) {
-        int handIdx = JSON.parseObject(action.getBody(), Integer.class); // idx in hand
-        int cardId = game.getCurrentPlayer().getHand().get(handIdx);
+        Integer cardId = JSON.parseObject(action.getBody(), Integer.class);
         DistrictCard card = DistrictCard.values()[cardId];
         CitadelPlayer player = game.getCurrentPlayer();
-        player.getHand().remove(handIdx); // remove from hand
+        player.getHand().remove(cardId); // remove from hand
         if (player.getDistricts() == null) {
             player.setDistricts(new ArrayList<>());
         }

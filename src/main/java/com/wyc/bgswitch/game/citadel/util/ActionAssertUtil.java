@@ -239,24 +239,19 @@ public class ActionAssertUtil {
             throw new ActionUnavailableException("You have no more build times.");
         }
 
-        int handIdx = JSON.parseObject(action.getBody(), Integer.class); // 第几张手牌
-        // 手牌不够
-        if (game.getCurrentPlayer().getHand() == null || game.getCurrentPlayer().getHand().size() < handIdx + 1) {
-            throw new ActionUnavailableException("District card not found.");
-        }
-        Integer cardIdx = game.getCurrentPlayer().getHand().get(handIdx);
+        int cardId = JSON.parseObject(action.getBody(), Integer.class);
         // 卡不存在
-        if (cardIdx >= DistrictCard.values().length) {
+        if (cardId >= DistrictCard.values().length) {
             throw new ActionUnavailableException("District card not found.");
         }
         List<Integer> districts = player.getDistricts();
         // 重复建造
         if (districts != null &&
-                districts.contains(cardIdx)) {
+                districts.contains(cardId)) {
             throw new ActionUnavailableException("An identical district has been built.");
         }
         // 钱够
-        DistrictCard card = DistrictCard.values()[cardIdx];
+        DistrictCard card = DistrictCard.values()[cardId];
         if (player.getCoins() < card.getCost()) {
             throw new ActionUnavailableException("You don't have enough coins.");
         }
