@@ -192,7 +192,7 @@ public class ActionAssertUtil {
     }
 
     /**
-     * 玩家尚未获取钱/卡
+     * 玩家已经获取钱/卡
      *
      * @param game
      */
@@ -200,6 +200,23 @@ public class ActionAssertUtil {
         CitadelPlayer player = game.getCurrentPlayer();
         if (!player.getStatus().isCollected()) {
             throw new ActionUnavailableException("Player has not collected yet.");
+        }
+    }
+
+    /**
+     * 角色状态正确
+     * 1. 如果是刺客或者小偷，必须使用技能
+     *
+     * @param game
+     */
+    public static void assertCharacterStatusCorrectedBeforeEndTurn(CitadelGame game) {
+        CitadelGameCharacter.InGameStatus status = game.getCharacterStatus().get(game.getCurrentCharacterIdx());
+        if (game.getCurrentCharacterIdx() == CitadelGameCharacter.ASSASSIN.ordinal() && !status.getAbilityUsed()[0]) {
+            throw new ActionUnavailableException("Player has not announced target to assassinate from yet.");
+        }
+        if (game.getCurrentCharacterIdx() == CitadelGameCharacter.THIEF.ordinal() && !status.getAbilityUsed()[0]) {
+            // 如果小偷被刺杀，会由系统跳过回合，不需要手动结束
+            throw new ActionUnavailableException("Player has not announced target to stolen from yet.");
         }
     }
 

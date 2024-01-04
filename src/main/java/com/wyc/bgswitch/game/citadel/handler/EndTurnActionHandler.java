@@ -17,6 +17,7 @@ public class EndTurnActionHandler implements ActionHandler {
         ActionAssertUtil.assertStatusOngoing(game);
         ActionAssertUtil.assertCorrectTurnToMove(game, userId);
         ActionAssertUtil.assertPlayerCollected(game);
+        ActionAssertUtil.assertCharacterStatusCorrectedBeforeEndTurn(game);
     }
 
     @Override
