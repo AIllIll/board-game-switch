@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class CitadelGameAction {
+    private String playerId = null; // 发出action的用户名
     private CitadelGameActionType type;
     private String body;
 }

@@ -77,6 +77,7 @@ public class CitadelGameController {
     @Debug
     @PostMapping("/action/{gameId}")
     public void action(@PathVariable String gameId, @RequestBody CitadelGameAction action, Authentication authentication) {
+        action.setPlayerId(authentication.getName());
         LockManager.MultiLockBuilder.MultiLock lock = lockManager.useBuilder().obtain(RedisLockPrefix.LOCK_PREFIX_GAME).of(gameId).build();
         lock.lock();
         try {
