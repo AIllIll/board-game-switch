@@ -54,6 +54,7 @@ public enum CitadelGameCharacter {
         PICKED,
         HIDDEN, // in dual game, one character will be preserved fore second player to pick
         BURIED, // buried
+        UNAVAILABLE
     }
 
     @Getter

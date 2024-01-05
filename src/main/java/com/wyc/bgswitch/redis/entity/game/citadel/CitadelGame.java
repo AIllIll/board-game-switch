@@ -178,15 +178,24 @@ public class CitadelGame implements Cloneable {
         }
     }
 
+    /**
+     * 对于某用户的可视游戏信息
+     *
+     * @param userId
+     * @return
+     */
     public CitadelGame masked(String userId) {
         CitadelGame game = this.clone();
         // 隐藏用户信息
         game.getPlayers().forEach(p -> {
+            // 非本用户的角色信息
             if (!Objects.equals(p.getUserId(), userId)) {
                 // 隐藏用户角色
                 int currentCharacterIdx = game.getCurrentCharacterIdx();
                 if (p.getCharacters() != null) {
-                    p.setCharacters(p.getCharacters().stream().map(c -> c.ordinal() > currentCharacterIdx ? null : c).toList());
+                    p.setCharacters(p.getCharacters().stream().map(
+                            c -> c.ordinal() > currentCharacterIdx ? null : c
+                    ).toList());
                 }
                 // 隐藏手牌
                 if (p.getHand() != null) {
@@ -194,10 +203,21 @@ public class CitadelGame implements Cloneable {
                 }
                 // 隐藏真实分数
                 p.setScore(0);
+                // 抽到的卡
+                if (p.getDrawnCards() != null) {
+                    p.setDrawnCards(Collections.nCopies(p.getDrawnCards().size(), null));
+                }
             }
         });
         // 隐藏牌堆
         game.setCardDeck(game.getCardDeck().stream().map(c -> -1).toList());
+        // 角色只有AVAILABLE和UNAVAILABLE
+        for (int i = 0; i < game.getCharacterCardStatus().size(); i++) {
+            if (!CitadelGameCharacter.CardStatus.AVAILABLE.equals(game.getCharacterCardStatus().get(i))) {
+                game.getCharacterCardStatus().set(i, CitadelGameCharacter.CardStatus.UNAVAILABLE);
+            }
+        }
+
         return game;
 
     }
