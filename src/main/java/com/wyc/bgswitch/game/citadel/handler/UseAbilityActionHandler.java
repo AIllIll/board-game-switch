@@ -148,6 +148,9 @@ public class UseAbilityActionHandler implements ActionHandler {
     private void handleCollect(CitadelGame game, DistrictCard.DistrictCardType type) {
         CitadelPlayer player = game.getCurrentPlayer();
         int coins = player.getDistrictMap().get(type.ordinal()).size();
+        if (player.getDistricts().contains(DistrictCard.Magic_School.ordinal())) {
+            coins += 1;
+        }
         player.setCoins(player.getCoins() + coins);
     }
 

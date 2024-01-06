@@ -51,7 +51,7 @@ public enum DistrictCard {
     Library("Library", 1, DistrictCardType.Special, 6, "If you choose to draw cards you you take an action, you can keep 2 of cards you have drawn."),
     // cost one more coins to destroy the owner's district
     Great_Wall("Great Wall", 1, DistrictCardType.Special, 6, "The cost for the Warlord to destroy any of your other districts is increased by one gold"),
-    // todo may get one more coins as collect income
+    // may get one more coins as collect income
     Magic_School("Magic School", 1, DistrictCardType.Special, 6, "For the purposes of income, the School Of Magic I considered to be the color of your choice.  If you are the King this round, for example, the School is considered to be a noble (yellow) district."),
     ;
     private final String name;
