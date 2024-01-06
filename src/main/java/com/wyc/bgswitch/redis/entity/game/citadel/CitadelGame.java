@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.redis.entity.game.citadel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
@@ -215,6 +216,12 @@ public class CitadelGame implements Cloneable {
         for (int i = 0; i < game.getCharacterCardStatus().size(); i++) {
             if (!CitadelGameCharacter.CardStatus.AVAILABLE.equals(game.getCharacterCardStatus().get(i))) {
                 game.getCharacterCardStatus().set(i, CitadelGameCharacter.CardStatus.UNAVAILABLE);
+            }
+        }
+        // 隐藏action:
+        for (CitadelGameAction action : game.getActions()) {
+            if (CitadelGameActionType.PICK_CHARACTER.equals(action.getType())) {
+                action.setBody(null);
             }
         }
 
