@@ -24,8 +24,11 @@ public class ScoreUtil {
                 List<DistrictCard> districtsOfOneColor = districtMap.getOrDefault(t, Collections.emptyList());
                 score += districtsOfOneColor.stream().map(DistrictCard::getCost).reduce(Integer::sum).orElse(0);
             }
-            // extra score for all colors. todo: Haunted_City
-            if (districtMap.values().stream().filter(l -> l != null && l.size() > 0).toList().size() == 5) {
+            // extra score for all colors.
+            int numOfColor = districtMap.values().stream().filter(l -> l != null && l.size() > 0).toList().size();
+            boolean fourAsFive = player.getDistricts().contains(DistrictCard.Haunted_City.ordinal()) &&
+                    player.getDistrictMap().get(DistrictCard.DistrictCardType.Special.ordinal()).size() >= 2;
+            if (numOfColor == 5 || numOfColor == 4 && fourAsFive) {
                 score += extraScore.ALL_COLORS.getPoints();
             }
             // score for building 8 districts
@@ -35,6 +38,14 @@ public class ScoreUtil {
             // score for building 8 districts first
             if (game.getFirstPlace() != -1 && game.getPlayers().get(game.getFirstPlace()).getUserId().equals(player.getUserId())) {
                 score += extraScore.FIRST_PLAYER_WITH_8_DISTRICTS.getPoints();
+            }
+            // score for Dragon_Gate
+            if (player.getDistricts().contains(DistrictCard.Dragon_Gate.ordinal())) {
+                score += 2;
+            }
+            // score for University
+            if (player.getDistricts().contains(DistrictCard.University.ordinal())) {
+                score += 2;
             }
         }
 
@@ -48,7 +59,6 @@ public class ScoreUtil {
 
     @Getter
     private enum extraScore {
-        // todo: points from special district card
         FIRST_PLAYER_WITH_8_DISTRICTS(2),
         PLAYER_WITH_8_DISTRICTS(2),
         ALL_COLORS(3);

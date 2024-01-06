@@ -61,8 +61,8 @@ public class CitadelGame implements Cloneable {
      * 选角色： [0, 2 * players.size)
      * 角色行动： [2 * players.size, 2 * players.size + 8), 如果角色不存在就直接跳轮
      */
-    private List<CitadelGameCharacter.CardStatus> characterCardStatus; // 角色卡状态
-    private List<CitadelGameCharacter.InGameStatus> characterStatus; // 角色状态
+    private List<CitadelGameCharacter.CardStatus> characterCardStatus = new ArrayList<>(); // 角色卡状态
+    private List<CitadelGameCharacter.InGameStatus> characterStatus = new ArrayList<>(); // 角色状态
     private Integer firstPlace; // 第一个完成建筑的玩家
     private Long createdAt;
     private Long startedAt;

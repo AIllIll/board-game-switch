@@ -126,6 +126,9 @@ public class UseAbilityActionHandler implements ActionHandler {
                 throw new ActionUnavailableException("The district is in bishop's protection.");
             }
             int districtCardId = body.destroyAbilityParam.districtCardId;
+            if (districtCardId == DistrictCard.Keep.ordinal()) {
+                throw new ActionUnavailableException("Keep is indestructible.");
+            }
             CitadelPlayer currentPlayer = game.getCurrentPlayer();
             int coinsLeft = currentPlayer.getCoins() - (DistrictCard.values()[districtCardId].getCost() - 1);
             if (coinsLeft < 0) {

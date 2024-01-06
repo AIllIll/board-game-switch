@@ -237,11 +237,19 @@ public abstract class Judge {
     }
 
     private void addDistrictBuff(CitadelGame game) {
-//        CitadelPlayer player = game.getCurrentPlayer();
-//        if (player.getDistricts().contains(DistrictCard.Great_Wall.ordinal())) {
-//            CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
-//            status.setDefense(status.getDefense() + 1);
-//        }
+        CitadelPlayer player = game.getCurrentPlayer();
+        if (player.getDistricts().contains(DistrictCard.Observatory.ordinal())) {
+            CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
+            status.setDraw(status.getDraw() + 1);
+        }
+        if (player.getDistricts().contains(DistrictCard.Library.ordinal())) {
+            CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
+            status.setKeep(status.getKeep() + 1);
+        }
+        if (player.getDistricts().contains(DistrictCard.Great_Wall.ordinal())) {
+            CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
+            status.setDefense(status.getDefense() + 1);
+        }
     }
 
     /**
