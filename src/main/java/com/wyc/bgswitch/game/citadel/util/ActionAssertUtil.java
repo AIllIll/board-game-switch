@@ -297,4 +297,23 @@ public class ActionAssertUtil {
             throw new ActionUnavailableException("You have used the ability.");
         }
     }
+
+    /**
+     * 可以使用地区
+     *
+     * @param game
+     * @param district 地区
+     */
+    public static void assertCanUseDistrict(CitadelGame game, DistrictCard district) {
+        int currentCharacterIdx = game.getCurrentCharacterIdx();
+        CitadelGameCharacter.InGameStatus status = game.getCharacterStatus().get(currentCharacterIdx);
+        // not killed
+        if (status.isAssassinated()) {
+            throw new ActionUnavailableException("Your character have been assassinated.");
+        }
+        // player haven't used that district
+        if (game.getCurrentPlayer().getStatus().getUsedDistricts().contains(district)) {
+            throw new ActionUnavailableException("The district has been used.");
+        }
+    }
 }

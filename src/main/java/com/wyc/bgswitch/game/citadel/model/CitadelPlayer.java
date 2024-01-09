@@ -1,6 +1,7 @@
 package com.wyc.bgswitch.game.citadel.model;
 
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
+import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 import com.wyc.bgswitch.game.citadel.util.DistrictUtil;
 
 import java.util.ArrayList;
@@ -74,6 +75,9 @@ public class CitadelPlayer implements Cloneable {
         private int keep = 1;
         // defense: extra cost (base on district cost) to destroy this player's districts, default is -1
         private int defense = -1;
+        // district abilities
+        private List<DistrictCard> usedDistricts = new ArrayList<>();
+
 
         public void costBuildTimes() {
             buildTimes -= 1;

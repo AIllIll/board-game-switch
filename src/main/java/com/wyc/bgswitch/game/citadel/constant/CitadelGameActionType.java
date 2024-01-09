@@ -15,7 +15,7 @@ public enum CitadelGameActionType {
     DRAW_CARDS("DRAW_CARDS"), // 获取地区卡
     RETURN_CARDS("RETURN_CARDS"), // 归还地区卡
     BUILD("BUILD"), // 建造
-    USE_BUILDING("USE_BUILDING"), // 使用建筑
+    USE_DISTRICT("USE_DISTRICT"), // 使用地区
     USE_ABILITY("USE_ABILITY"), // 使用技能
     END_TURN("END_TURN"), // 结束回合
     GIVE_UP("GIVE_UP"), // 投降
