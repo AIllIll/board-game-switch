@@ -17,7 +17,8 @@ public enum CitadelGameActionType {
     BUILD("BUILD"), // 建造
     USE_DISTRICT("USE_DISTRICT"), // 使用地区
     USE_ABILITY("USE_ABILITY"), // 使用技能
-    END_TURN("END_TURN"), // 结束回合
+    END_TURN("END_TURN"), // 结束角色回合
+    END_EXTRA_TURN("END_EXTRA_TURN"), // 结束额外回合
     GIVE_UP("GIVE_UP"), // 投降
     DEFAULT(null);
 

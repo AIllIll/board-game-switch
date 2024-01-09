@@ -136,6 +136,7 @@ public class UseAbilityActionHandler implements ActionHandler {
             }
             currentPlayer.setCoins(coinsLeft);
             targetPlayer.getDistricts().remove((Integer) districtCardId);
+            targetPlayer.setDestroyedDistricts(List.of(districtCardId));
         }
 
         // marked ability as used

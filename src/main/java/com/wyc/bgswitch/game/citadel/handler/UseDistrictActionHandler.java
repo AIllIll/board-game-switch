@@ -20,10 +20,15 @@ public class UseDistrictActionHandler implements ActionHandler {
     @Override
     public void check(CitadelGame game, CitadelGameAction action, String userId) {
         ActionAssertUtil.assertStatusOngoing(game);
-        ActionAssertUtil.assertCorrectTurnToMove(game, userId);
-        ActionAssertUtil.assertPlayerCollected(game);
         UseDistrictActionBody body = JSON.parseObject(action.getBody(), UseDistrictActionBody.class);
-        ActionAssertUtil.assertCanUseDistrict(game, body.district);
+        if (body.district == DistrictCard.Graveyard) {
+            ActionAssertUtil.assertInExtraTurn(game);
+            ActionAssertUtil.assertCanUseGraveyard(game);
+        } else {
+            ActionAssertUtil.assertCorrectTurnToMove(game, userId);
+            ActionAssertUtil.assertPlayerCollected(game);
+            ActionAssertUtil.assertCanUseDistrict(game, body.district);
+        }
     }
 
     @Override
@@ -35,7 +40,7 @@ public class UseDistrictActionHandler implements ActionHandler {
             if (game.getCurrentPlayer().getHand() == null || game.getCurrentPlayer().getHand().size() == 0) {
                 throw new ActionUnavailableException("Your hand is empty.");
             }
-            player.getHand().remove(body.laboratoryAbilityBody.districtCardId);
+            player.getHand().remove(body.laboratoryDistrictBody.handIdx);
             player.setCoins(player.getCoins() + 1);
 
         } else if (DistrictCard.Smithy.equals(district)) {
@@ -51,6 +56,9 @@ public class UseDistrictActionHandler implements ActionHandler {
             // 抽卡
             player.getHand().addAll(game.getCardDeck().subList(0, 3));
             game.getCardDeck().subList(0, 3).clear();
+        } else if (DistrictCard.Graveyard.equals(district)) {
+            CitadelPlayer player = game.getCurrentPlayer();
+            player.setCoins(player.getCoins() - 1);
         } else {
             throw new ActionUnavailableException("The district does not have special function.");
         }
@@ -59,9 +67,9 @@ public class UseDistrictActionHandler implements ActionHandler {
         return game;
     }
 
-    private record UseDistrictActionBody(DistrictCard district, LaboratoryAbilityBody laboratoryAbilityBody) {
+    private record UseDistrictActionBody(DistrictCard district, LaboratoryDistrictBody laboratoryDistrictBody) {
     }
 
-    private record LaboratoryAbilityBody(int districtCardId) {
+    private record LaboratoryDistrictBody(int handIdx) {
     }
 }

@@ -32,6 +32,10 @@ public class JudgeManager {
         getJudge(game).afterCharacterTurn(game);
     }
 
+    public static void afterExtraTurn(CitadelGame game) {
+        getJudge(game).afterExtraTurn(game);
+    }
+
     public static void afterAction(CitadelGame game) {
         getJudge(game).afterAction(game);
     }

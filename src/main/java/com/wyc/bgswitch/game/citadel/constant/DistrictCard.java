@@ -35,13 +35,13 @@ public enum DistrictCard {
     Haunted_City("Haunted City", 1, DistrictCardType.Special, 2, "For the purposes of victory points, the Haunted City is considered to be of the color of your choice.  You cannot use this ability if you built it during the last round of the game"),
     // 无法被摧毁
     Keep("Keep", 2, DistrictCardType.Special, 3, "The Keep cannot be destroyed by the Warlord"),
-    // todo 以1卡换1币
+    // 以1卡换1币
     Laboratory("Laboratory", 1, DistrictCardType.Special, 5, "Once during your turn, you may discard a district card from your hand and receive one gold from the bank"),
-    // todo 2币换3卡
+    // 2币换3卡
     Smithy("Smithy", 1, DistrictCardType.Special, 5, "Once during your turn, you may pay two gold to draw 3 district cards."),
     // 抽2变成抽3
     Observatory("Observatory", 1, DistrictCardType.Special, 5, "If you choose to draw cards when you take an action, you draw 3 cards, keep 1 of your choice, and put the other 2 on the bottom of the deck"),
-    // todo 如非warlord，可以在回合结束时付1金币获取warlord摧毁的建筑卡
+    // 如非warlord，可以在回合结束时付1金币获取warlord摧毁的建筑卡
     Graveyard("Graveyard", 1, DistrictCardType.Special, 5, "When the Warlord destroys a district, you may pay one gold to take the destroyed district into your hand.  You may not do this if you are the Warlord"),
     // extra 2 points
     Dragon_Gate("Dragon Gate", 1, DistrictCardType.Special, 6, "This district costs 6 gold to build, but is worth 8 points at the end of the game"),

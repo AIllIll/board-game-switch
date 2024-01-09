@@ -71,7 +71,7 @@ public class CitadelGameController {
     @GetMapping("/{gameId}")
 //    @JsonView(CitadelGame.FrontendView.class)
     public CitadelGame getGame(@PathVariable String gameId, Authentication authentication) {
-        return gameService.get(gameId).masked(authentication.getName());
+        return gameService.get(gameId).filterForUser(authentication.getName());
     }
 
     @Debug

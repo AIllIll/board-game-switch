@@ -3,6 +3,7 @@ package com.wyc.bgswitch.redis.entity.game.citadel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameActionType;
 import com.wyc.bgswitch.game.citadel.constant.CitadelGameCharacter;
+import com.wyc.bgswitch.game.citadel.constant.DistrictCard;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameAction;
 import com.wyc.bgswitch.game.citadel.model.CitadelGameConfig;
 import com.wyc.bgswitch.game.citadel.model.CitadelPlayer;
@@ -52,15 +53,11 @@ public class CitadelGame implements Cloneable {
      * turn 轮次序号
      * <p>
      * 选角色： [0, 2 * players.size)
-     * 角色行动： [2 * players.size, 2 * players.size + 8), 如果角色不存在就直接跳轮
+     * 角色行动： [2 * players.size, 2 * players.size + 8), 8个角色轮次，如果角色不存在就直接跳轮
+     * 额外行动： 2 * players.size + 8 + x:
+     * -- x==0: District of Graveyard: 回收被摧毁的district
      */
     private Integer turn = 0; // 轮次序号
-    /**
-     * turn 轮次序号
-     * <p>
-     * 选角色： [0, 2 * players.size)
-     * 角色行动： [2 * players.size, 2 * players.size + 8), 如果角色不存在就直接跳轮
-     */
     private List<CitadelGameCharacter.CardStatus> characterCardStatus = new ArrayList<>(); // 角色卡状态
     private List<CitadelGameCharacter.InGameStatus> characterStatus = new ArrayList<>(); // 角色状态
     private Integer firstPlace; // 第一个完成建筑的玩家
@@ -101,16 +98,19 @@ public class CitadelGame implements Cloneable {
         ));
     }
 
+    public void clearDestroyedDistricts() {
+        this.players.forEach(p -> p.setDestroyedDistricts(new ArrayList<>()));
+    }
+
     public Long getRandomSeed() {
         // 每个回合是不一样的随机数
         return this.getCreatedAt() * this.round;
     }
 
     public int getCurrentPlayerIdx() {
-        int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
         if (isInPickingTurn()) {
-            return (this.getCrown() + turn) % numOfPlayers;
+            return (this.getCrown() + this.turn) % numOfPlayers;
         } else if (isInCharacterTurn()) {
             int currentCharacterIdx = getCurrentCharacterIdx();
             CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
@@ -120,6 +120,14 @@ public class CitadelGame implements Cloneable {
                 }
             }
             return -1;
+        } else if (isInExtraTurn()) {
+            if (isInExtraTurnOfGraveyard()) {
+                for (int i = 0; i < players.size(); i++) {
+                    if (players.get(i).getDistricts().contains(DistrictCard.Graveyard.ordinal())) {
+                        return i;
+                    }
+                }
+            }
         }
         return -1;
     }
@@ -143,22 +151,41 @@ public class CitadelGame implements Cloneable {
         if (!isInCharacterTurn()) {
             return -1;
         }
-        int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
         return turn - 2 * numOfPlayers;
     }
 
     public Boolean isInPickingTurn() {
-        int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
         return this.status.equals(GameStatus.ONGOING) && turn < 2 * numOfPlayers && turn >= 0;
     }
 
     public Boolean isInCharacterTurn() {
+        int numOfPlayers = this.getPlayers().size();
+        return this.status.equals(GameStatus.ONGOING) && turn >= 2 * numOfPlayers && turn < 8 + 2 * numOfPlayers;
+    }
+
+    public Boolean isInExtraTurn() {
         int turn = this.getTurn();
         int numOfPlayers = this.getPlayers().size();
-        return this.status.equals(GameStatus.ONGOING) && turn >= 2 * numOfPlayers && turn - 2 * numOfPlayers < 8;
+        return this.status.equals(GameStatus.ONGOING) && turn >= 8 + 2 * numOfPlayers;
     }
+
+    public Boolean isInExtraTurnOfGraveyard() {
+        int numOfPlayers = this.getPlayers().size();
+        return isInExtraTurn() && turn - (8 + 2 * numOfPlayers) == 0;
+    }
+
+    /**
+     * 是否该进入next round
+     *
+     * @return
+     */
+    @JsonIgnore
+    public Boolean isInEndTurn() {
+        return isInExtraTurn() && !isInExtraTurnOfGraveyard();
+    }
+
 
     @JsonIgnore
     public Boolean isCharacterTurnOf(CitadelGameCharacter character) {
@@ -185,7 +212,7 @@ public class CitadelGame implements Cloneable {
      * @param userId
      * @return
      */
-    public CitadelGame masked(String userId) {
+    public CitadelGame filterForUser(String userId) {
         CitadelGame game = this.clone();
         // 隐藏用户信息
         game.getPlayers().forEach(p -> {

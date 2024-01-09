@@ -10,19 +10,17 @@ import com.wyc.bgswitch.redis.entity.game.citadel.CitadelGame;
 /**
  * @author wyc
  */
-@Handler(CitadelGameActionType.END_TURN)
-public class EndTurnActionHandler implements ActionHandler {
+@Handler(CitadelGameActionType.END_EXTRA_TURN)
+public class EndExtraTurnActionHandler implements ActionHandler {
     @Override
     public void check(CitadelGame game, CitadelGameAction action, String userId) {
         ActionAssertUtil.assertStatusOngoing(game);
-        ActionAssertUtil.assertCorrectTurnToMove(game, userId);
-        ActionAssertUtil.assertPlayerCollected(game);
-        ActionAssertUtil.assertCharacterStatusCorrectedBeforeEndTurn(game);
+        ActionAssertUtil.assertInExtraTurn(game);
     }
 
     @Override
     public CitadelGame handle(CitadelGame game, CitadelGameAction action, String userId) {
-        JudgeManager.afterCharacterTurn(game);
+        JudgeManager.afterExtraTurn(game);
         return game;
     }
 }

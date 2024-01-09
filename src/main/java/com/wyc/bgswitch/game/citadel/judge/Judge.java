@@ -80,6 +80,7 @@ public abstract class Judge {
      * 4. set pickingTurn
      * 5. initialize characterCardStatus
      * 6. initialize characterStatus
+     * 7. initialize players.destroyedDistricts
      *
      * @param game
      */
@@ -100,6 +101,8 @@ public abstract class Judge {
         game.clearCharacterCardStatus();
         // 6.
         game.clearCharacterStatus();
+        // 7.
+        game.clearDestroyedDistricts();
     }
 
     /**
@@ -221,11 +224,15 @@ public abstract class Judge {
             }
         }
         game.setTurn(i + game.getPlayers().size() * 2);
-        // do afterRound if all turns are over
+        // go into extra turn if all character turns are over
         if (i == 8) {
-            // all turns are over
-            JudgeManager.afterRound(game);
-            JudgeManager.beforeRound(game);
+            if (game.getPlayers().stream().noneMatch(p -> p.getDestroyedDistricts() != null &&
+                    p.getDestroyedDistricts().size() > 0 &&
+                    p.getDistricts().contains(DistrictCard.Graveyard.ordinal())
+            )) {
+                JudgeManager.afterRound(game);
+                JudgeManager.beforeRound(game);
+            }
         }
     }
 
@@ -249,6 +256,21 @@ public abstract class Judge {
         if (player.getDistricts().contains(DistrictCard.Great_Wall.ordinal())) {
             CitadelPlayer.Status status = game.getCurrentPlayer().getStatus();
             status.setDefense(status.getDefense() + 1);
+        }
+    }
+
+    /**
+     * after player finish extra action like using Graveyard
+     *
+     * @param game
+     */
+    public void afterExtraTurn(CitadelGame game) {
+        game.setTurn(game.getTurn() + 1);
+        // do afterRound if all turns are over
+        if (game.isInEndTurn()) {
+            // all turns are over
+            JudgeManager.afterRound(game);
+            JudgeManager.beforeRound(game);
         }
     }
 

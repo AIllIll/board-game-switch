@@ -116,11 +116,7 @@ public class ActionAssertUtil {
      * @param game
      */
     public static void assertCorrectTurnToPick(CitadelGame game, String userId) {
-        if (game.getTurn() < 0) {
-            throw new ActionUnavailableException("It's not your turn to pick character.");
-        }
-        int currentPlayerIdx = (game.getCrown() + game.getTurn()) % game.getPlayers().size();
-        if (!game.getPlayers().get(currentPlayerIdx).getUserId().equals(userId)) {
+        if (!game.isInPickingTurn() || !game.getCurrentPlayer().getUserId().equals(userId)) {
             throw new ActionUnavailableException("It's not your turn to pick character.");
         }
     }
@@ -143,15 +139,26 @@ public class ActionAssertUtil {
      * @param game
      */
     public static void assertCorrectTurnToMove(CitadelGame game, String userId) {
-        if (game.getTurn() < 2 * game.getPlayers().size()) {
-            throw new ActionUnavailableException("It's not your turn to pick character.");
+        if (!game.isInCharacterTurn()) {
+            throw new ActionUnavailableException("It's not your turn to move.");
         }
-        int currentCharacterIdx = game.getTurn() - 2 * game.getPlayers().size();
-        CitadelGameCharacter character = CitadelGameCharacter.values()[currentCharacterIdx];
+        CitadelGameCharacter character = CitadelGameCharacter.values()[game.getCurrentCharacterIdx()];
         CitadelPlayer player = game.getPlayers().stream().filter(p -> p.getUserId().equals(userId)).findAny()
                 .orElse(CitadelPlayer.emptyPlayer());
         if (!player.getCharacters().contains(character)) {
             throw new ActionUnavailableException("It's not your turn to move.");
+        }
+    }
+
+
+    /**
+     * 额外回合
+     *
+     * @param game
+     */
+    public static void assertInExtraTurn(CitadelGame game) {
+        if (!game.isInExtraTurn()) {
+            throw new ActionUnavailableException("It's not in extra turns.");
         }
     }
 
@@ -227,7 +234,6 @@ public class ActionAssertUtil {
      */
     public static void assertDrawnCardNotEmpty(CitadelGame game) {
         CitadelPlayer player = game.getCurrentPlayer();
-        // todo
         if (player.getDrawnCards() == null || player.getDrawnCards().size() == 0) {
             throw new ActionUnavailableException("Drawn district cards not found.");
         }
@@ -311,8 +317,33 @@ public class ActionAssertUtil {
         if (status.isAssassinated()) {
             throw new ActionUnavailableException("Your character have been assassinated.");
         }
+        // player have built that district
+        if (!game.getCurrentPlayer().getDistricts().contains(district.ordinal())) {
+            throw new ActionUnavailableException("The district is not yours to use.");
+        }
         // player haven't used that district
         if (game.getCurrentPlayer().getStatus().getUsedDistricts().contains(district)) {
+            throw new ActionUnavailableException("The district has been used.");
+        }
+    }
+
+    /**
+     * 可以使用Graveyard
+     */
+    public static void assertCanUseGraveyard(CitadelGame game) {
+        if (!game.isInExtraTurnOfGraveyard()) {
+            throw new ActionUnavailableException("Can't use Graveyard now.");
+        }
+        // player have built that district
+        if (!game.getCurrentPlayer().getDistricts().contains(DistrictCard.Graveyard.ordinal())) {
+            throw new ActionUnavailableException("The district is not yours to use.");
+        }
+        // enough coins
+        if (game.getCurrentPlayer().getCoins() < 1) {
+            throw new ActionUnavailableException("You don't have enough coins to use Graveyard.");
+        }
+        // player haven't used that district
+        if (game.getCurrentPlayer().getStatus().getUsedDistricts().contains(DistrictCard.Graveyard)) {
             throw new ActionUnavailableException("The district has been used.");
         }
     }

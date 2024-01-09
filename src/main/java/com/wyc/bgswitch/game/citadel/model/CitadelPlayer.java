@@ -23,7 +23,8 @@ public class CitadelPlayer implements Cloneable {
     private List<CitadelGameCharacter> characters = new ArrayList<>(); // 身份
     private Integer coins = 0; // 金币
     private List<Integer> hand = new ArrayList<>(); // 手牌
-    private List<Integer> drawnCards; // 抽的牌
+    private List<Integer> drawnCards = new ArrayList<>(); // 抽的牌
+    private List<Integer> destroyedDistricts = new ArrayList<>(); // 被摧毁的卡
     private List<Integer> districts = new ArrayList<>(); // 建筑
     private Status status = new Status(); // status reset every character turn
 
