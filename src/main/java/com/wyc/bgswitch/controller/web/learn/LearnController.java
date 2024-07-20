@@ -41,24 +41,8 @@ public class LearnController {
 
 
     @GetMapping("/hello")
-    public String hello(@RequestParam(value = "name", defaultValue = "World") String name, Authentication authentication) {
-//        System.out.println(authentication);
-        Instant now = Instant.now();
-        long expiry = 36000L;
-        // @formatter:off
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiry))
-                .subject(authentication.getName())
-                .claim("scope", scope)
-                .build();
-        // @formatter:on
-        return "Bearer " + this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-//        return String.format("lllasfasfal %s!", name);
+    public String hello() {
+        return "hello";
     }
 
     @PostMapping("/token")

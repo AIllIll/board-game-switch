@@ -1,5 +1,6 @@
 package com.wyc.bgswitch.config.data;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -21,8 +22,14 @@ import java.time.Duration;
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
+    @Value("${redis.host}")
+    String hostName;
+    @Value("${redis.port}")
+    Integer port;
+
     @Bean
     public LettuceConnectionFactory connectionFactory() {
+        System.out.println(hostName+port);
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
 //                .useSsl().and()
@@ -30,7 +37,7 @@ public class RedisConfig {
                 .shutdownTimeout(Duration.ZERO)
                 .build();
 
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 16379), clientConfig);
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(hostName, port), clientConfig);
     }
 
     @Bean

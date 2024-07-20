@@ -59,7 +59,6 @@ public class AuthService implements UserDetailsService {
         } finally {
             lock.unLock();
         }
-
     }
 
     @Override
