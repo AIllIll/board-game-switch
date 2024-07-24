@@ -3,6 +3,7 @@ package com.wyc.bgswitch.controller.web.learn;
 import com.wyc.bgswitch.config.web.annotation.ApiRestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +13,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/learn")
 public class LearnController {
     private final JwtEncoder encoder;
+
+    @Value("${version}")
+    private String version;
 
 
     @Autowired
@@ -42,7 +45,7 @@ public class LearnController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "hello";
+        return "hello \nversion: %s".formatted(version);
     }
 
     @PostMapping("/token")
