@@ -49,12 +49,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
+        // 后来的不覆盖
         http.authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers("/").permitAll()
-                    .requestMatchers(apiPrefix+"/public/**").permitAll()
-                    .requestMatchers(apiPrefix+"/csrf").permitAll()
-                    .requestMatchers(HttpMethod.POST, apiPrefix+"/login").permitAll()
-                    .requestMatchers(HttpMethod.POST, apiPrefix+"/register").permitAll()
+                    .requestMatchers("/").permitAll() // 根目录全开
+                    .requestMatchers(apiPrefix+"/public/**").permitAll() // 公开资源全开
+                    .requestMatchers(apiPrefix+"/csrf").permitAll() // csrf全开
+                    .requestMatchers(HttpMethod.POST, apiPrefix+"/register").permitAll() // 注册开
+                    .requestMatchers(HttpMethod.POST, apiPrefix+"/login").permitAll() // 主登录开
+                    .requestMatchers(HttpMethod.POST, apiPrefix+"/login/weapp").permitAll() // 微信小程序登录开
                     .requestMatchers(apiPrefix+"/learn/**").permitAll()
                     .requestMatchers(apiPrefix+"/**").authenticated()
                     .requestMatchers(websocketEndpoint).permitAll()
@@ -69,6 +71,7 @@ public class SecurityConfig {
                 )
                 .csrf((csrf) -> csrf.ignoringRequestMatchers(
                         apiPrefix+"/login",
+                        apiPrefix+"/login/weapp",// todo: 要求小程序也使用csrf
                         apiPrefix+"/register",
                         apiPrefix+"/token",
                         apiPrefix+"/refresh",

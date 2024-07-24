@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
     }
 
     public void register(String username, String password) throws HttpClientErrorException.Conflict {
-        if (username.trim().length() < 8 || username.trim().length() > 12) {
+        if (!username.startsWith("weapp-") && (username.trim().length() < 8 || username.trim().length() > 12)) {
             throw new InvalidCredentialException("Invalid username %s.".formatted(username));
         }
         // todo: validate username: nums and letters only
@@ -64,10 +64,15 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         List<Auth> l = authRepository.findByUsername(username);
-        if (l == null || l.size() == 0) {
+        if (l == null || l.isEmpty()) {
             throw new UsernameNotFoundException("Username %s not found.".formatted(username));
         }
         return new MyUserDetails(l.get(0));
+    }
+
+    public Boolean userExists(String username) {
+        List<Auth> l = authRepository.findByUsername(username);
+        return l != null && l.size() == 1;
     }
 
     private record MyUserDetails(Auth auth) implements UserDetails {
