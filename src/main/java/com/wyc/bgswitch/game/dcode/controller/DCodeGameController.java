@@ -6,6 +6,7 @@ import com.wyc.bgswitch.game.dcode.data.DCodeRepo;
 import com.wyc.bgswitch.game.dcode.handler.DCodeActionHandlerManager;
 import com.wyc.bgswitch.game.dcode.model.DCodeGame;
 import com.wyc.bgswitch.game.dcode.model.DCodeGameAction;
+import com.wyc.bgswitch.game.dcode.websocket.SessionManager;
 import com.wyc.bgswitch.lock.LockManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,12 +22,14 @@ public class DCodeGameController {
     private final DCodeActionHandlerManager handlerManager;
     private final LockManager lockManager;
     private final DCodeRepo repo;
+    private final SessionManager sessionManager; // websocket
 
     @Autowired
-    public DCodeGameController(DCodeActionHandlerManager handlerManager, LockManager lockManager, DCodeRepo repo) {
+    public DCodeGameController(DCodeActionHandlerManager handlerManager, LockManager lockManager, DCodeRepo repo, SessionManager sessionManager) {
         this.handlerManager = handlerManager;
         this.lockManager = lockManager;
         this.repo = repo;
+        this.sessionManager = sessionManager;
     }
 
     @GetMapping("/hello")
@@ -62,6 +65,7 @@ public class DCodeGameController {
         lock.lock();
         try {
             handlerManager.handleAction(action, authentication.getName());
+            sessionManager.notifyAllPlayer();
         } finally {
             lock.unLock();
         }
@@ -80,6 +84,7 @@ public class DCodeGameController {
             DCodeGame game = new DCodeGame();
             game.reset();
             repo.save(game);
+            sessionManager.notifyAllPlayer();
         }
     }
 }
