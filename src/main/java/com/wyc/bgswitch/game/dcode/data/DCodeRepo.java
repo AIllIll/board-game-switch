@@ -13,8 +13,9 @@ public class DCodeRepo {
     public DCodeGame find() {
         if (game == null) {
             game = new DCodeGame();
+            game.reset();
         }
-        return game;
+        return game.clone();
     }
 
     public void save(DCodeGame game) {

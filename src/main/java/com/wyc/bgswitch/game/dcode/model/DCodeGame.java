@@ -1,5 +1,6 @@
 package com.wyc.bgswitch.game.dcode.model;
 
+import com.alibaba.fastjson2.JSON;
 import com.wyc.bgswitch.game.dcode.constant.DCodeGameStatusType;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +14,9 @@ import java.util.Objects;
 public class DCodeGame {
     @Setter
     private DCodeGameStatusType status; // 0准备，1进行中，2
-    private final List<Integer> black;
-    private final List<Integer> white;
-    private final List<DCodePlayer> players;
+    private final List<Integer> black = new ArrayList<>();
+    private final List<Integer> white = new ArrayList<>();
+    private final List<DCodePlayer> players = new ArrayList<>();
     @Setter
     private Integer currentPlayerIdx; // 当前玩家
     @Setter
@@ -33,17 +34,16 @@ public class DCodeGame {
     @Setter
     private Integer playerIdx = null; // 当前玩家的idx
 
-    public DCodeGame() {
+    public DCodeGame() {}
+
+    public void reset() {
         status = DCodeGameStatusType.PREPARE;
-        black = new ArrayList<>();
-        white = new ArrayList<>();
         for (int i = 0; i < 13; i++) {
             black.add(2 * i);
             white.add(2 * i + 1);
         }
         Collections.shuffle(black);
         Collections.shuffle(white);
-        players = new ArrayList<>();
         currentPlayerIdx = 0;
         pullCard = null;
         slotRange = null;
@@ -77,5 +77,9 @@ public class DCodeGame {
                 }
             }
         }
+    }
+
+    public DCodeGame clone() {
+        return JSON.parseObject(JSON.toJSONString(this), DCodeGame.class);
     }
 }

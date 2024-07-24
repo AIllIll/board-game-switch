@@ -51,7 +51,8 @@ public class DCodeActionHandlerManager {
         // 保存
         repo.save(newGame);
         // 补充信息：是否当前玩家，当前玩家的idx
-        newGame.attachInfo(userId);
-        return newGame;
+        DCodeGame returnGame = newGame.clone();
+        returnGame.attachInfo(userId);
+        return returnGame;
     }
 }

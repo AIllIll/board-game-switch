@@ -76,7 +76,10 @@ public class DCodeGameController {
     public void action(Authentication authentication) {
         String userId = authentication.getName();
         if(repo.find().getPlayers().stream().anyMatch(p -> p.getUserId().equals(userId))) {
-            repo.save(new DCodeGame());
+            // 新建游戏
+            DCodeGame game = new DCodeGame();
+            game.reset();
+            repo.save(game);
         }
     }
 }
